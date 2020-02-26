@@ -1,0 +1,62 @@
+{
+  "env": {
+    "mocha": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
+  },
+  "extends": [
+    "eslint:recommended",
+    "airbnb",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "ignorePatterns": [
+    "node_modules/*",
+    "build/**/*"
+  ],
+  "rules": {
+    "@typescript-eslint/no-var-requires": 0,
+    "@typescript-eslint/no-explicit-any": 1,
+    "@typescript-eslint/no-inferrable-types": 0,
+    "@typescript-eslint/camelcase": 1,
+    "curly": [2, "all"],
+    "import/extensions": ["error", "never"],
+    "max-classes-per-file": ["error", 5],
+    "max-len": [
+      "error",
+      {
+        "ignoreTrailingComments": true,
+        "ignoreTemplateLiterals": true,
+        "ignoreStrings": true,
+        "ignoreComments": true,
+        "code": 140,
+        "tabWidth": 2,
+        "ignoreRegExpLiterals": true
+      }
+    ],
+    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
+    "no-underscore-dangle": [
+      2,
+      {
+        "allowAfterThis": true,
+        "allow": [
+          "_id"
+        ]
+      }
+    ],
+    "prefer-destructuring": [
+      "error",
+      {
+        "object": true,
+        "array": false
+      }
+    ]
+  }
+}

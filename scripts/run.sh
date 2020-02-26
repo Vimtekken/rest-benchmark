@@ -1,0 +1,1 @@
+docker run --env-file local.env -v /var/run/docker.sock:/var/run/docker.sock rest-benchmark:latest
