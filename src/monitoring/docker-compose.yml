@@ -1,0 +1,20 @@
+version: '3.7'
+
+services:
+  influx:
+    image: influxdb:1.7
+    container_name: rest-benchmark-influx
+    ports:
+      - "8086:8086"
+
+  telegraf:
+    # image: telegraf
+    build: .
+    container_name: rest-benchmark-telegraf
+#     configs:
+#       - source: telegraf-conf
+#         target: /etc/telegraf/telegraf2.conf
+
+# configs:
+#   telegraf-conf:
+#     file: ${PWD}/telegraf.conf

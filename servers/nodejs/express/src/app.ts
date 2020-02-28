@@ -1,2 +1,12 @@
+import Express from 'express';
 
-console.log('This is an example express app');
+// Init express
+const app = Express();
+
+// Add routes
+app.get('/healthcheck', async (request: Express.Request, response: Express.Response) => {
+	response.send();
+});
+
+console.log('Application listening on 8080');
+app.listen(8080);

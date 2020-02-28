@@ -3,7 +3,9 @@ import fs from 'fs';
 
 import ApacheBench from './ApacheBench';
 import Api from './Api';
-import Monitoring from './Monitoring';
+import Monitoring from './monitoring';
+import SystemMetrics from './SystemMetrics';
+import Utility from './Utility';
 
 interface ApplicationConfig {
 	name: string;
@@ -11,6 +13,9 @@ interface ApplicationConfig {
 	httpPort: number;
 	https: boolean;
 }
+
+// Used to hold continer open if needed for testing
+// setInterval(() => console.log('interval'), 2000);
 
 // Pull the docker target for the test
 const defaultPort = 8080;
@@ -38,13 +43,14 @@ async function switchToAsync() {
 
 	// Launch the monitoring services on the remote host.
 	console.log('Launching monitoring');
-	try {
-		Monitoring.stop(); // Close any previous containers first.
-	} catch (error) {
-		// Failed to stop containers. Probably don't exist this time.
-	}
 	Monitoring.start();
 
+	// Create system metrics instance
+	const metrics = new SystemMetrics(remoteHost);
+	console.log('Waiting for monitoring containers to fully boot ...');
+	await metrics.initComplete;
+
+	// Load the applications config
 	console.log('Loading application config');
 	const applicationConfigRaw = fs.readFileSync(`${__dirname}/applications_config.json`, { encoding: 'utf-8' });
 	if (!applicationConfigRaw) {
@@ -67,12 +73,6 @@ async function switchToAsync() {
 		console.log('Testing applications: ', applicationConfig.map((config) => config.name));
 	}
 
-	function sleep(milliseconds: number) {
-		return new Promise((resolve) => {
-			setTimeout(resolve, milliseconds);
-		});
-	} 
-
 	// Start the tests, We use this type of loop here so we can make sure all async calls are handled in order sequentially
 	for (let i = 0; i < applicationConfig.length; i += 1) {
 		const config = applicationConfig[i];
@@ -90,7 +90,7 @@ async function switchToAsync() {
 		// Start app docker container
 		const launchTime = new Date();
 		console.log('Launching ', config.name);
-		execSync(`docker run -d --name rest-benchmark-${config.name} rest-benchmark-${config.name}:latest`);
+		execSync(`docker run -d -p ${config.httpPort}:${config.httpPort} --name rest-benchmark-${config.name} rest-benchmark-${config.name}:latest`);
 		const dockerTime = new Date();
 
 		// Wait for healthcheck to make sure the service is running
@@ -99,20 +99,24 @@ async function switchToAsync() {
 			console.error(`Application ${config.name} failed to become healthy in the alotted time`);
 			execSync(`docker stop rest-benchmark-${config.name} && docker rm rest-benchmark-${config.name}`);
 			process.exit(1);
-		}, 15000); // 15 seconds from image launch to becoming healthy.
+		}, 30000); // 15 seconds from image launch to becoming healthy.
 		while(!(await Api.healthcheck(config.https ?? false, remoteHost, config.httpPort ?? 8080, '/healthcheck'))) {
-			await sleep(50);
+			await Utility.sleep(50);
 		}
 		clearTimeout(healthyTimeout);
 		const healthyTime = new Date();
 		console.log(config.name, ' healthy. Collecting idle data');
 
 		// Let it idle out to get past init load and also measure idle load
-		await sleep(5000);
+		await Utility.sleep(5000);
+		console.log('System metric for idle ', await metrics.getMetricForDuration(healthyTime, new Date()));
 
 		// Do load test
 		console.log('Starting load tests');
 		const loadTestStartTime = new Date();
+		const apacheData = ApacheBench(remoteHost, config.httpPort, '/healthcheck', 1, 1);
+		console.log('Apache Data:\n', apacheData);
+		console.log('System metric for apache ', await metrics.getMetricForDuration(loadTestStartTime, new Date()));
 		const loadTestEndTime = new Date();
 
 		// Close container.

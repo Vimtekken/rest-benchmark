@@ -5,6 +5,9 @@
 ### Execution environment file ###
 local.env
 
+# VS code workspace
+*.code-workspace
+
 ### Node ###
 # Logs
 logs

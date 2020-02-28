@@ -13,6 +13,8 @@ RUN apt-get update && \
 # Setup docker cli
 RUN curl -fsSL https://get.docker.com -o get-docker.sh
 RUN sh get-docker.sh
+RUN curl -L "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+RUN chmod +x /usr/local/bin/docker-compose
 
 # Start building app
 RUN mkdir -p /home/app
@@ -27,4 +29,4 @@ COPY tsconfig.json /home/app
 COPY scripts/ /home/app/scripts
 COPY src/ /home/app/src
 RUN npm run build
-COPY servers/ build/servers 
+COPY servers/ /home/app/servers
