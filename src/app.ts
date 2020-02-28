@@ -3,7 +3,9 @@ import fs from 'fs';
 
 import ApacheBench from './ApacheBench';
 import Api from './Api';
-import { ApplicationConfig, Sample, ApplicationReport, SystemData } from './Interfaces';
+import { ApplicationConfig } from './interfaces/Config';
+import { Sample, ApplicationReport } from './interfaces/ServerReport';
+import {SystemData } from './interfaces/System';
 import Monitoring from './monitoring';
 import SystemMetrics from './SystemMetrics';
 import Utility from './Utility';

@@ -1,6 +1,6 @@
 import * as Influx from 'influx';
 
-import { MemoryData, CpuData, KernelData, SystemData } from './Interfaces';
+import { MemoryData, CpuData, KernelData, SystemData } from './interfaces/System';
 import Utility from './Utility';
 
 export default class SystemMetrics {

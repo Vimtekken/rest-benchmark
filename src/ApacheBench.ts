@@ -1,6 +1,6 @@
 import { execSync } from 'child_process';
 
-import { ApacheData, ConnectTimeData, DataTransfers, RequestData, ConnectTimes } from './Interfaces';
+import { ApacheData, ConnectTimeData, DataTransfers, RequestData, ConnectTimes } from './interfaces/Apache';
 
 const connectionRegexes = {
 	connect: /Connect:\s*([\d.]*)\s*([\d.]*)\s*([\d.]*)\s*([\d.]*)\s*([\d.]*)/gi, // number per group
