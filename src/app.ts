@@ -3,16 +3,10 @@ import fs from 'fs';
 
 import ApacheBench from './ApacheBench';
 import Api from './Api';
+import { ApplicationConfig, Sample, ApplicationReport, SystemData } from './Interfaces';
 import Monitoring from './monitoring';
 import SystemMetrics from './SystemMetrics';
 import Utility from './Utility';
-
-interface ApplicationConfig {
-	name: string;
-	source: string;
-	httpPort: number;
-	https: boolean;
-}
 
 // Used to hold continer open if needed for testing
 // setInterval(() => console.log('interval'), 2000);
@@ -101,7 +95,7 @@ async function switchToAsync() {
 			process.exit(1);
 		}, 30000); // 15 seconds from image launch to becoming healthy.
 		while(!(await Api.healthcheck(config.https ?? false, remoteHost, config.httpPort ?? 8080, '/healthcheck'))) {
-			await Utility.sleep(50);
+			await Utility.sleep(25);
 		}
 		clearTimeout(healthyTimeout);
 		const healthyTime = new Date();
@@ -109,19 +103,32 @@ async function switchToAsync() {
 
 		// Let it idle out to get past init load and also measure idle load
 		await Utility.sleep(5000);
-		console.log('System metric for idle ', await metrics.getMetricForDuration(healthyTime, new Date()));
+		const idleMetrics: SystemData = await metrics.getMetricForDuration(healthyTime, new Date());
 
 		// Do load test
 		console.log('Starting load tests');
 		const loadTestStartTime = new Date();
-		const apacheData = ApacheBench(remoteHost, config.httpPort, '/healthcheck', 1, 1);
-		console.log('Apache Data:\n', apacheData);
-		console.log('System metric for apache ', await metrics.getMetricForDuration(loadTestStartTime, new Date()));
+		const exampleApache = ApacheBench(remoteHost, config.httpPort, '/healthcheck', 1, 1);
 		const loadTestEndTime = new Date();
+		const exampleSample: Sample = {
+			apache: exampleApache,
+			system: await metrics.getMetricForDuration(loadTestStartTime, loadTestEndTime),
+		};
+		console.log('Example test sample ', exampleSample);
 
 		// Close container.
 		console.log('Stopping ', config.name);
 		execSync(`docker stop rest-benchmark-${config.name} && docker rm rest-benchmark-${config.name}`);
+		const dockerStopTime = new Date();
+
+		const report: ApplicationReport = {
+			buildTime: buildEnd.getTime() - buildStart.getTime(),
+			idle: idleMetrics,
+			launchTime: dockerTime.getTime() - launchTime.getTime(),
+			healthTime: healthyTime.getTime() - dockerTime.getTime(),
+			stopTime: dockerStopTime.getTime() - loadTestEndTime.getTime(),
+		};
+		console.log('Application Report ', report);
 	};
 
 	// Close resources
