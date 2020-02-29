@@ -1,28 +1,20 @@
 import Debug from 'debug';
 import { execSync } from 'child_process';
+import fs from 'fs';
 
-import ApacheBench from './ApacheBench';
 import Api from './HealthChecker';
 import ApplicationConfig from './ApplicationConfig';
 import { ApplicationReport } from './interfaces/ServerReport';
 import { SystemData } from './interfaces/System';
-import { Sample } from './interfaces/Sample';
 import Monitoring from './monitoring';
 import SystemMetrics from './SystemMetrics';
 import Tester from './Tester';
 import Utility from './Utility';
 
-// Used to hold continer open if needed for testing
-// setInterval(() => debug('interval'), 2000);
-
 const debug = Debug('rb');
 
 // Pull the docker target for the test
-const defaultPort = 8080;
 const remoteHost = process.env.REMOTE_HOST || '';
-const remoteUser = process.env.REMOTE_USER;
-const remotePassword = process.env.REMOTE_PASSWORD;
-const remoteSshPort = process.env.REMOTE_SSH_PORT || 22;
 
 // Require host
 if (!remoteHost) {
@@ -31,16 +23,6 @@ if (!remoteHost) {
 }
 
 async function switchToAsync() {
-	// Following remote host code disabled for the time being.
-	// Determine execution mode
-	// const dockerCommandMode: boolean = remoteUser != null && remotePassword != null;
-	// if (dockerCommandMode) {
-	// 	debug('Running in docker command mode.');
-	// 	// process.env.DOCKER_HOST = `ssh://${remoteUser}@${remoteHost}:${remoteSshPort}`;
-	// } else {
-	// 	debug('Missing remote user or password. Running in test mode only.');
-	// }
-
 	// Launch the monitoring services on the remote host.
 	debug('Launching monitoring');
 	Monitoring.start();
@@ -64,6 +46,7 @@ async function switchToAsync() {
 	}
 
 	// Start the tests, We use this type of loop here so we can make sure all async calls are handled in order sequentially
+	const applicationReports: ApplicationReport[] = [];
 	for (let i = 0; i < ApplicationConfig.length; i += 1) {
 		const config = ApplicationConfig[i];
 		const appDebug = debug.extend(config.name);
@@ -114,6 +97,7 @@ async function switchToAsync() {
 		const dockerStopTime = new Date();
 
 		const report: ApplicationReport = {
+			application: config.name,
 			buildTime: buildEnd.getTime() - buildStart.getTime(),
 			idle: idleMetrics,
 			launchTime: dockerTime.getTime() - launchTime.getTime(),
@@ -121,8 +105,11 @@ async function switchToAsync() {
 			stopTime: dockerStopTime.getTime() - shutdownTime.getTime(),
 			tests,
 		};
-		appDebug(config.name, 'Application Report : ', JSON.stringify(report));
+		applicationReports.push(report);
 	};
+
+	// Wrtie report data to output
+	fs.writeFileSync('/out/out.json', JSON.stringify(applicationReports), { encoding: 'utf-8' });
 
 	// Close resources
 	debug('Stopping monitoring');

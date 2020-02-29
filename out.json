@@ -1,0 +1,261 @@
+[{
+	"application": "node-express",
+	"buildTime": 149,
+	"idle": {
+		"cpu": {
+			"system": {
+				"min": 0,
+				"max": 17.142857143981946,
+				"average": 8.651508898560385
+			},
+			"user": {
+				"min": 0,
+				"max": 48.64864864933957,
+				"average": 22.93800182171146
+			}
+		},
+		"kernel": {
+			"contextSwitches": 50517,
+			"contextSwitchesPerSecond": 10099.360255897642,
+			"interrupts": 26299,
+			"processesForked": 6
+		},
+		"memory": {
+			"available": {
+				"min": 1319927808,
+				"max": 1336475648,
+				"average": 1331170826.4489796
+			},
+			"availablePercent": {
+				"min": 63.27086380727055,
+				"max": 64.06408607639673,
+				"average": 63.80979895566011
+			},
+			"free": {
+				"min": 137748480,
+				"max": 154292224,
+				"average": 148703023.02040815
+			},
+			"used": {
+				"min": 691576832,
+				"max": 708124672,
+				"average": 696951870.6938776
+			},
+			"usedPercent": {
+				"min": 33.150800585099596,
+				"max": 33.94402285422577,
+				"average": 33.40845357119316
+			}
+		}
+	},
+	"launchTime": 495,
+	"healthTime": 789,
+	"stopTime": 461,
+	"tests": [{
+		"name": "concurrency",
+		"subtests": [{
+			"config": {
+				"parallelProcesses": 1,
+				"concurrency": 1,
+				"totalRequestsToSend": 1000,
+				"route": "/healthcheck"
+			},
+			"trials": [{
+				"apache": {
+					"connect": {
+						"connect": {
+							"min": 0,
+							"mean": 1,
+							"sd": 0,
+							"median": 1,
+							"max": 6
+						},
+						"processing": {
+							"min": 0,
+							"mean": 3,
+							"sd": 1,
+							"median": 2,
+							"max": 14
+						},
+						"waiting": {
+							"min": 0,
+							"mean": 2,
+							"sd": 0,
+							"median": 2,
+							"max": 14
+						},
+						"total": {
+							"min": 0,
+							"mean": 4,
+							"sd": 1,
+							"median": 3,
+							"max": 15
+						}
+					},
+					"data": {
+						"totalTransferred": "98000 bytes",
+						"transferRate": "26.31 [Kbytes/sec] received"
+					},
+					"requests": {
+						"completed": 1000,
+						"duration": 3,
+						"failed": 0,
+						"non2xx": 0,
+						"rps": 274,
+						"timePerRequest": 3
+					}
+				},
+				"system": {
+					"cpu": {
+						"system": {
+							"min": 0,
+							"max": 33.333333337605204,
+							"average": 25.519290104617156
+						},
+						"user": {
+							"min": 0,
+							"max": 21.621621621874073,
+							"average": 11.962460082500364
+						}
+					},
+					"kernel": {
+						"contextSwitches": 128615,
+						"contextSwitchesPerSecond": 35265.97203180697,
+						"interrupts": 72489,
+						"processesForked": 1
+					},
+					"memory": {
+						"available": {
+							"min": 1325088768,
+							"max": 1331036160,
+							"average": 1328293888
+						},
+						"availablePercent": {
+							"min": 63.51825491100792,
+							"max": 63.80334370674337,
+							"average": 63.671892640114656
+						},
+						"free": {
+							"min": 140881920,
+							"max": 153849856,
+							"average": 145963690.66666666
+						},
+						"used": {
+							"min": 698626048,
+							"max": 704122880,
+							"average": 701090247.1111112
+						},
+						"usedPercent": {
+							"min": 33.488705418061514,
+							"max": 33.7521965777564,
+							"average": 33.60682703456823
+						}
+					}
+				}
+			}]
+		}]
+	}, {
+		"name": "total requests",
+		"subtests": [{
+			"config": {
+				"parallelProcesses": 1,
+				"concurrency": 64,
+				"totalRequestsToSend": 1000,
+				"route": "/healthcheck"
+			},
+			"trials": [{
+				"apache": {
+					"connect": {
+						"connect": {
+							"min": 1,
+							"mean": 12,
+							"sd": 5,
+							"median": 12,
+							"max": 24
+						},
+						"processing": {
+							"min": 23,
+							"mean": 70,
+							"sd": 18,
+							"median": 70,
+							"max": 134
+						},
+						"waiting": {
+							"min": 19,
+							"mean": 53,
+							"sd": 15,
+							"median": 51,
+							"max": 94
+						},
+						"total": {
+							"min": 41,
+							"mean": 82,
+							"sd": 18,
+							"median": 82,
+							"max": 141
+						}
+					},
+					"data": {
+						"totalTransferred": "98000 bytes",
+						"transferRate": "72.64 [Kbytes/sec] received"
+					},
+					"requests": {
+						"completed": 1000,
+						"duration": 1,
+						"failed": 0,
+						"non2xx": 0,
+						"rps": 759,
+						"timePerRequest": 84
+					}
+				},
+				"system": {
+					"cpu": {
+						"system": {
+							"min": 0,
+							"max": 50.00000000194892,
+							"average": 44.93505151201402
+						},
+						"user": {
+							"min": 0,
+							"max": 35.13513513007943,
+							"average": 30.30572326297586
+						}
+					},
+					"kernel": {
+						"contextSwitches": 36595,
+						"contextSwitchesPerSecond": 27309.70149253731,
+						"interrupts": 24133,
+						"processesForked": 1
+					},
+					"memory": {
+						"available": {
+							"min": 1327452160,
+							"max": 1336111104,
+							"average": 1330528938.6666667
+						},
+						"availablePercent": {
+							"min": 63.63154432914797,
+							"max": 64.04661162541845,
+							"average": 63.77903000435225
+						},
+						"free": {
+							"min": 149590016,
+							"max": 158597120,
+							"average": 152852480
+						},
+						"used": {
+							"min": 693551104,
+							"max": 702349312,
+							"average": 699153749.3333334
+						},
+						"usedPercent": {
+							"min": 33.24543749938643,
+							"max": 33.667180428614905,
+							"average": 33.514000831181754
+						}
+					}
+				}
+			}]
+		}]
+	}]
+}]
