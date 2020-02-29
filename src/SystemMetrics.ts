@@ -42,7 +42,7 @@ export default class SystemMetrics {
 		} catch (error) {
 			if (attempt < SystemMetrics.MAX_ATTEMPTS) {
 				await Utility.sleep(500);
-				console.log(error);
+				console.error(error);
 				this.initConnection(host, port, resolve, reject, attempt + 1);
 			} else {
 				reject(error);
@@ -51,14 +51,6 @@ export default class SystemMetrics {
 	}
  // diskio, mem
 	async getCpuDataForDuration(startTime: Date, endTime: Date): Promise<CpuData> {
-		const raw1 = await this.influx?.query(`
-			select * from mem
-			where time >= '${startTime.toISOString()}' and time <= '${endTime.toISOString()}'
-			order by time desc;
-		`);
-
-		// console.log(raw1);
-
 		const raw = await this.influx?.query(`
 			select * from cpu
 			where cpu = 'cpu-total' and time >= '${startTime.toISOString()}' and time <= '${endTime.toISOString()}'

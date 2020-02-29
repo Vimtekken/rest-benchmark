@@ -1,4 +1,10 @@
-import { ApplicationConfig } from './interfaces/Config';
+
+interface ApplicationConfig {
+	httpPort: number;
+	https: boolean;
+	name: string;
+	source: string;
+}
 
 const config: ApplicationConfig[] = [
 	{

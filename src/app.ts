@@ -1,7 +1,8 @@
+import Debug from 'debug';
 import { execSync } from 'child_process';
 
 import ApacheBench from './ApacheBench';
-import Api from './Api';
+import Api from './HealthChecker';
 import ApplicationConfig from './ApplicationConfig';
 import { ApplicationReport } from './interfaces/ServerReport';
 import { SystemData } from './interfaces/System';
@@ -11,7 +12,9 @@ import SystemMetrics from './SystemMetrics';
 import Utility from './Utility';
 
 // Used to hold continer open if needed for testing
-// setInterval(() => console.log('interval'), 2000);
+// setInterval(() => debug('interval'), 2000);
+
+const debug = Debug('rb');
 
 // Pull the docker target for the test
 const defaultPort = 8080;
@@ -31,56 +34,57 @@ async function switchToAsync() {
 	// Determine execution mode
 	// const dockerCommandMode: boolean = remoteUser != null && remotePassword != null;
 	// if (dockerCommandMode) {
-	// 	console.log('Running in docker command mode.');
+	// 	debug('Running in docker command mode.');
 	// 	// process.env.DOCKER_HOST = `ssh://${remoteUser}@${remoteHost}:${remoteSshPort}`;
 	// } else {
-	// 	console.log('Missing remote user or password. Running in test mode only.');
+	// 	debug('Missing remote user or password. Running in test mode only.');
 	// }
 
 	// Launch the monitoring services on the remote host.
-	console.log('Launching monitoring');
+	debug('Launching monitoring');
 	Monitoring.start();
 
 	// Create system metrics instance
 	const metrics = new SystemMetrics(remoteHost);
-	console.log('Waiting for monitoring containers to fully boot ...');
+	debug('Waiting for monitoring containers to fully boot ...');
 	await metrics.initComplete;
 
 	// Filter for application name or use all applications
 	if (process.argv?.length > 2) {
 		const apps: string[] = process.argv.slice(2);
-		console.log('Testing applications ', apps);
+		debug('Testing applications ', apps);
 		Object.keys(ApplicationConfig).forEach((key) => {
 			if (!apps.includes(ApplicationConfig[key].name)) {
 				delete ApplicationConfig[key];
 			}
 		});
 	} else {
-		console.log('Testing applications: ', ApplicationConfig.map((config) => config.name));
+		debug('Testing applications: ', ApplicationConfig.map((config) => config.name));
 	}
 
 	// Start the tests, We use this type of loop here so we can make sure all async calls are handled in order sequentially
 	for (let i = 0; i < ApplicationConfig.length; i += 1) {
 		const config = ApplicationConfig[i];
+		const appDebug = debug.extend(config.name);
 
 		// Build the target application
 		const buildStart = new Date();
-		console.log(config.name, ': Building');
+		appDebug(config.name, 'Building');
 		const source = `${__dirname}/../${config.source}`;
 		// Consider using no cache on the build for build time measurements.
 		execSync(`docker build -f ${source}/Dockerfile --tag rest-benchmark-${config.name}:latest ${source}`);
-		console.log(config.name, ': Building complete');
+		appDebug(config.name, 'Building complete');
 		const buildEnd = new Date();
 
 		// Run test on application
 		// Start app docker container
 		const launchTime = new Date();
-		console.log(config.name, ': Launching ');
+		appDebug(config.name, 'Launching ');
 		execSync(`docker run -d -p ${config.httpPort}:${config.httpPort} --name rest-benchmark-${config.name} rest-benchmark-${config.name}:latest`);
 		const dockerTime = new Date();
 
 		// Wait for healthcheck to make sure the service is running
-		console.log(config.name, ': Waiting for to become healthy');
+		appDebug(config.name, 'Waiting for to become healthy');
 		const healthyTimeout = setTimeout(() => {
 			console.error(`Application ${config.name} failed to become healthy in the alotted time`);
 			execSync(`docker stop rest-benchmark-${config.name} && docker rm rest-benchmark-${config.name}`);
@@ -91,14 +95,14 @@ async function switchToAsync() {
 		}
 		clearTimeout(healthyTimeout);
 		const healthyTime = new Date();
-		console.log(config.name, ': Healthy. Collecting idle data');
+		appDebug(config.name, 'Healthy. Collecting idle data');
 
 		// Let it idle out to get past init load and also measure idle load
 		await Utility.sleep(5000);
 		const idleMetrics: SystemData = await metrics.getMetricForDuration(healthyTime, new Date());
 
 		// Do load test
-		console.log(config.name, ': Starting load tests');
+		appDebug(config.name, 'Starting load tests');
 		const loadTestStartTime = new Date();
 		const exampleApache = ApacheBench(remoteHost, config.httpPort, '/healthcheck', 1, 1);
 		const loadTestEndTime = new Date();
@@ -106,10 +110,10 @@ async function switchToAsync() {
 			apache: exampleApache,
 			system: await metrics.getMetricForDuration(loadTestStartTime, loadTestEndTime),
 		};
-		console.log(config.name, ': Load tests complete');
+		appDebug(config.name, 'Load tests complete');
 
 		// Close container.
-		console.log(config.name, ': Shutting Down');
+		appDebug(config.name, 'Shutting Down');
 		execSync(`docker stop rest-benchmark-${config.name} && docker rm rest-benchmark-${config.name}`);
 		const dockerStopTime = new Date();
 
@@ -136,14 +140,14 @@ async function switchToAsync() {
 				}
 			]
 		};
-		console.log(config.name, ': Application Report : ', JSON.stringify(report));
+		// appDebug(config.name, 'Application Report : ', report);
 	};
 
 	// Close resources
-	console.log('Stopping monitoring');
+	debug('Stopping monitoring');
 	Monitoring.stop();
 
-	console.log('Load Test Complete');
+	debug('Load Test Complete');
 }
 
 switchToAsync();
