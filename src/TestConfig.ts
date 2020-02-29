@@ -1,7 +1,7 @@
 import { TestConfig } from './interfaces/Tests';
 
 const config: TestConfig = {
-	numberOfTrails: 1,
+	numberOfTrails: 3,
 	tests: [
 		{
 			name: 'concurrency',

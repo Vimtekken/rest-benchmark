@@ -10,6 +10,7 @@ import Monitoring from './monitoring';
 import SystemMetrics from './SystemMetrics';
 import Tester from './Tester';
 import Utility from './Utility';
+import Writer from './Writer';
 
 const debug = Debug('rb');
 
@@ -109,7 +110,7 @@ async function switchToAsync() {
 	};
 
 	// Wrtie report data to output
-	fs.writeFileSync('/out/out.json', JSON.stringify(applicationReports), { encoding: 'utf-8' });
+	Writer(applicationReports);
 
 	// Close resources
 	debug('Stopping monitoring');
