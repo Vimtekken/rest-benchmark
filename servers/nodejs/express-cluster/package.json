@@ -1,0 +1,30 @@
+{
+  "name": "rest-benchmark-express",
+  "version": "0.0.1",
+  "description": "Benchmarking the HTTP handling of Express.JS",
+  "main": "build/app.js",
+  "keywords": [],
+  "author": "Vimtekken",
+  "dependencies": {
+    "debug": "4.1.1",
+    "express": "4.17.1"
+  },
+  "devDependencies": {
+    "esdoc": "1.1.0",
+    "esdoc-node": "1.0.5",
+    "esdoc-ecmascript-proposal-plugin": "1.0.0",
+    "esdoc-standard-plugin": "1.0.0",
+    "eslint": "6.8.0",
+    "eslint-config-airbnb": "18.0.1",
+    "eslint-config-airbnb-base": "14.0.0",
+    "eslint-plugin-import": "2.20.1",
+    "eslint-plugin-jsx-a11y": "6.2.3",
+    "eslint-plugin-react": "7.18.3",
+    "npm-check-updates": "4.0.1",
+    "typescript": "3.8.2"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node build/app.js"
+  }
+}

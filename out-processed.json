@@ -1,0 +1,1 @@
+[{"application":"node-express","rpsMax":{"max":779,"config":{"parallelProcesses":1,"concurrency":64,"totalRequestsToSend":1000,"route":"/healthcheck"}}},{"application":"node-express-cluster","rpsMax":{"max":531,"config":{"parallelProcesses":1,"concurrency":64,"totalRequestsToSend":1000,"route":"/healthcheck"}}}]
