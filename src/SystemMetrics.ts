@@ -108,8 +108,10 @@ export default class SystemMetrics {
 		const end = (raw as any)[0];
 		const begin = (raw as any)[(raw as any).length - 1];
 
+		const contextSwitches = raw && raw.length > 0 ? end.context_switches - begin.context_switches : 0;
 		return {
-			contextSwitches: raw && raw.length > 0 ? end.context_switches - begin.context_switches : 0,
+			contextSwitches,
+			contextSwitchesPerSecond: contextSwitches / ((endTime.getTime() - startTime.getTime()) / 1000),
 			interrupts: raw && raw.length > 0 ? end.interrupts - begin.interrupts : 0,
 			processesForked: raw && raw.length > 0 ? end.processes_forked - begin.processes_forked : 0,
 		}

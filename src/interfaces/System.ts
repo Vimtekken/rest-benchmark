@@ -12,6 +12,7 @@ export interface CpuData {
 
 export interface KernelData {
 	contextSwitches: number;
+	contextSwitchesPerSecond: number;
 	interrupts: number;
 	processesForked: number;
 }

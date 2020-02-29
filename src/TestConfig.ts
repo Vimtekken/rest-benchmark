@@ -9,45 +9,45 @@ const config: TestConfig = {
 				{
 					parallelProcesses: 1,
 					concurrency: 1,
-					totalRequestsToSend: 10000,
+					totalRequestsToSend: 1000,
 					route: '/healthcheck',
 				},
-				{
-					parallelProcesses: 1,
-					concurrency: 8,
-					totalRequestsToSend: 10000,
-					route: '/healthcheck',
-				},
-				{
-					parallelProcesses: 1,
-					concurrency: 32,
-					totalRequestsToSend: 10000,
-					route: '/healthcheck',
-				},
-				{
-					parallelProcesses: 1,
-					concurrency: 128,
-					totalRequestsToSend: 10000,
-					route: '/healthcheck',
-				},
-				{
-					parallelProcesses: 1,
-					concurrency: 256,
-					totalRequestsToSend: 10000,
-					route: '/healthcheck',
-				},
-				{
-					parallelProcesses: 1,
-					concurrency: 512,
-					totalRequestsToSend: 10000,
-					route: '/healthcheck',
-				},
-				{
-					parallelProcesses: 1,
-					concurrency: 1024,
-					totalRequestsToSend: 10000,
-					route: '/healthcheck',
-				}
+				// {
+				// 	parallelProcesses: 1,
+				// 	concurrency: 8,
+				// 	totalRequestsToSend: 10000,
+				// 	route: '/healthcheck',
+				// },
+				// {
+				// 	parallelProcesses: 1,
+				// 	concurrency: 32,
+				// 	totalRequestsToSend: 10000,
+				// 	route: '/healthcheck',
+				// },
+				// {
+				// 	parallelProcesses: 1,
+				// 	concurrency: 128,
+				// 	totalRequestsToSend: 10000,
+				// 	route: '/healthcheck',
+				// },
+				// {
+				// 	parallelProcesses: 1,
+				// 	concurrency: 256,
+				// 	totalRequestsToSend: 10000,
+				// 	route: '/healthcheck',
+				// },
+				// {
+				// 	parallelProcesses: 1,
+				// 	concurrency: 512,
+				// 	totalRequestsToSend: 10000,
+				// 	route: '/healthcheck',
+				// },
+				// {
+				// 	parallelProcesses: 1,
+				// 	concurrency: 1024,
+				// 	totalRequestsToSend: 10000,
+				// 	route: '/healthcheck',
+				// },
 			]
 		},
 		{
@@ -59,42 +59,42 @@ const config: TestConfig = {
 					totalRequestsToSend: 1000,
 					route: '/healthcheck',
 				},
-				{
-					parallelProcesses: 1,
-					concurrency: 64,
-					totalRequestsToSend: 5000,
-					route: '/healthcheck',
-				},
-				{
-					parallelProcesses: 1,
-					concurrency: 64,
-					totalRequestsToSend: 10000,
-					route: '/healthcheck',
-				},
-				{
-					parallelProcesses: 1,
-					concurrency: 64,
-					totalRequestsToSend: 50000,
-					route: '/healthcheck',
-				},
-				{
-					parallelProcesses: 1,
-					concurrency: 64,
-					totalRequestsToSend: 100000,
-					route: '/healthcheck',
-				},
-				{
-					parallelProcesses: 1,
-					concurrency: 64,
-					totalRequestsToSend: 500000,
-					route: '/healthcheck',
-				},
-				{
-					parallelProcesses: 1,
-					concurrency: 64,
-					totalRequestsToSend: 1000000,
-					route: '/healthcheck',
-				}
+				// {
+				// 	parallelProcesses: 1,
+				// 	concurrency: 64,
+				// 	totalRequestsToSend: 5000,
+				// 	route: '/healthcheck',
+				// },
+				// {
+				// 	parallelProcesses: 1,
+				// 	concurrency: 64,
+				// 	totalRequestsToSend: 10000,
+				// 	route: '/healthcheck',
+				// },
+				// {
+				// 	parallelProcesses: 1,
+				// 	concurrency: 64,
+				// 	totalRequestsToSend: 50000,
+				// 	route: '/healthcheck',
+				// },
+				// {
+				// 	parallelProcesses: 1,
+				// 	concurrency: 64,
+				// 	totalRequestsToSend: 100000,
+				// 	route: '/healthcheck',
+				// },
+				// {
+				// 	parallelProcesses: 1,
+				// 	concurrency: 64,
+				// 	totalRequestsToSend: 500000,
+				// 	route: '/healthcheck',
+				// },
+				// {
+				// 	parallelProcesses: 1,
+				// 	concurrency: 64,
+				// 	totalRequestsToSend: 1000000,
+				// 	route: '/healthcheck',
+				// },
 			]
 		}
 	]

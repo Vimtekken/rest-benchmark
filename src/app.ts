@@ -9,6 +9,7 @@ import { SystemData } from './interfaces/System';
 import { Sample } from './interfaces/Sample';
 import Monitoring from './monitoring';
 import SystemMetrics from './SystemMetrics';
+import Tester from './Tester';
 import Utility from './Utility';
 
 // Used to hold continer open if needed for testing
@@ -103,17 +104,12 @@ async function switchToAsync() {
 
 		// Do load test
 		appDebug(config.name, 'Starting load tests');
-		const loadTestStartTime = new Date();
-		const exampleApache = ApacheBench(remoteHost, config.httpPort, '/healthcheck', 1, 1);
-		const loadTestEndTime = new Date();
-		const exampleSample: Sample = {
-			apache: exampleApache,
-			system: await metrics.getMetricForDuration(loadTestStartTime, loadTestEndTime),
-		};
+		const tests = await Tester(appDebug, metrics, remoteHost, config.httpPort);
 		appDebug(config.name, 'Load tests complete');
 
 		// Close container.
 		appDebug(config.name, 'Shutting Down');
+		const shutdownTime = new Date();
 		execSync(`docker stop rest-benchmark-${config.name} && docker rm rest-benchmark-${config.name}`);
 		const dockerStopTime = new Date();
 
@@ -122,25 +118,10 @@ async function switchToAsync() {
 			idle: idleMetrics,
 			launchTime: dockerTime.getTime() - launchTime.getTime(),
 			healthTime: healthyTime.getTime() - dockerTime.getTime(),
-			stopTime: dockerStopTime.getTime() - loadTestEndTime.getTime(),
-			tests: [
-				{
-					name: 'example',
-					subtests: [
-						{
-							config: {
-								parallelProcesses: 1,
-								concurrency: 1,
-								totalRequestsToSend: 1,
-								route: '/healthcheck',
-							},
-							trials: [exampleSample],
-						}
-					]
-				}
-			]
+			stopTime: dockerStopTime.getTime() - shutdownTime.getTime(),
+			tests,
 		};
-		// appDebug(config.name, 'Application Report : ', report);
+		appDebug(config.name, 'Application Report : ', JSON.stringify(report));
 	};
 
 	// Close resources

@@ -42,15 +42,7 @@
       }
     ],
     "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
-    "no-underscore-dangle": [
-      2,
-      {
-        "allowAfterThis": true,
-        "allow": [
-          "_id"
-        ]
-      }
-    ],
+    "no-underscore-dangle": 2,
     "prefer-destructuring": [
       "error",
       {
