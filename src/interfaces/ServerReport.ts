@@ -1,10 +1,5 @@
-import * as Apache from './Apache';
 import * as System from './System';
-
-export interface Sample {
-	apache: Apache.ApacheData | null;
-	system: System.SystemData;
-}
+import * as Tests from './Tests';
 
 export interface ApplicationReport {
 	buildTime: number;
@@ -12,4 +7,5 @@ export interface ApplicationReport {
 	launchTime: number;
 	healthTime: number;
 	stopTime: number;
+	tests: Tests.TestResult[];
 }

@@ -1,8 +1,0 @@
-[
-	{
-		"name": "node-express",
-		"source": "servers/nodejs/express",
-		"httpPort": 8080,
-		"https": false
-	}
-]

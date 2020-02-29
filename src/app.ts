@@ -1,11 +1,11 @@
 import { execSync } from 'child_process';
-import fs from 'fs';
 
 import ApacheBench from './ApacheBench';
 import Api from './Api';
-import { ApplicationConfig } from './interfaces/Config';
-import { Sample, ApplicationReport } from './interfaces/ServerReport';
-import {SystemData } from './interfaces/System';
+import ApplicationConfig from './ApplicationConfig';
+import { ApplicationReport } from './interfaces/ServerReport';
+import { SystemData } from './interfaces/System';
+import { Sample } from './interfaces/Sample';
 import Monitoring from './monitoring';
 import SystemMetrics from './SystemMetrics';
 import Utility from './Utility';
@@ -46,51 +46,41 @@ async function switchToAsync() {
 	console.log('Waiting for monitoring containers to fully boot ...');
 	await metrics.initComplete;
 
-	// Load the applications config
-	console.log('Loading application config');
-	const applicationConfigRaw = fs.readFileSync(`${__dirname}/applications_config.json`, { encoding: 'utf-8' });
-	if (!applicationConfigRaw) {
-		console.error('Could not find applications config file');
-		process.exit(1);
-	}
-	const applicationConfig: ApplicationConfig[] = JSON.parse(applicationConfigRaw);
-	console.log('Application config ', applicationConfig);
-
 	// Filter for application name or use all applications
 	if (process.argv?.length > 2) {
 		const apps: string[] = process.argv.slice(2);
 		console.log('Testing applications ', apps);
-		Object.keys(applicationConfig).forEach((key) => {
-			if (!apps.includes(applicationConfig[key].name)) {
-				delete applicationConfig[key];
+		Object.keys(ApplicationConfig).forEach((key) => {
+			if (!apps.includes(ApplicationConfig[key].name)) {
+				delete ApplicationConfig[key];
 			}
 		});
 	} else {
-		console.log('Testing applications: ', applicationConfig.map((config) => config.name));
+		console.log('Testing applications: ', ApplicationConfig.map((config) => config.name));
 	}
 
 	// Start the tests, We use this type of loop here so we can make sure all async calls are handled in order sequentially
-	for (let i = 0; i < applicationConfig.length; i += 1) {
-		const config = applicationConfig[i];
+	for (let i = 0; i < ApplicationConfig.length; i += 1) {
+		const config = ApplicationConfig[i];
 
 		// Build the target application
 		const buildStart = new Date();
-		console.log('Building ', config.name);
+		console.log(config.name, ': Building');
 		const source = `${__dirname}/../${config.source}`;
 		// Consider using no cache on the build for build time measurements.
 		execSync(`docker build -f ${source}/Dockerfile --tag rest-benchmark-${config.name}:latest ${source}`);
-		console.log('Building complete');
+		console.log(config.name, ': Building complete');
 		const buildEnd = new Date();
 
 		// Run test on application
 		// Start app docker container
 		const launchTime = new Date();
-		console.log('Launching ', config.name);
+		console.log(config.name, ': Launching ');
 		execSync(`docker run -d -p ${config.httpPort}:${config.httpPort} --name rest-benchmark-${config.name} rest-benchmark-${config.name}:latest`);
 		const dockerTime = new Date();
 
 		// Wait for healthcheck to make sure the service is running
-		console.log('Waiting for ', config.name, ' to become healthy');
+		console.log(config.name, ': Waiting for to become healthy');
 		const healthyTimeout = setTimeout(() => {
 			console.error(`Application ${config.name} failed to become healthy in the alotted time`);
 			execSync(`docker stop rest-benchmark-${config.name} && docker rm rest-benchmark-${config.name}`);
@@ -101,14 +91,14 @@ async function switchToAsync() {
 		}
 		clearTimeout(healthyTimeout);
 		const healthyTime = new Date();
-		console.log(config.name, ' healthy. Collecting idle data');
+		console.log(config.name, ': Healthy. Collecting idle data');
 
 		// Let it idle out to get past init load and also measure idle load
 		await Utility.sleep(5000);
 		const idleMetrics: SystemData = await metrics.getMetricForDuration(healthyTime, new Date());
 
 		// Do load test
-		console.log('Starting load tests');
+		console.log(config.name, ': Starting load tests');
 		const loadTestStartTime = new Date();
 		const exampleApache = ApacheBench(remoteHost, config.httpPort, '/healthcheck', 1, 1);
 		const loadTestEndTime = new Date();
@@ -116,10 +106,10 @@ async function switchToAsync() {
 			apache: exampleApache,
 			system: await metrics.getMetricForDuration(loadTestStartTime, loadTestEndTime),
 		};
-		console.log('Example test sample ', exampleSample);
+		console.log(config.name, ': Load tests complete');
 
 		// Close container.
-		console.log('Stopping ', config.name);
+		console.log(config.name, ': Shutting Down');
 		execSync(`docker stop rest-benchmark-${config.name} && docker rm rest-benchmark-${config.name}`);
 		const dockerStopTime = new Date();
 
@@ -129,8 +119,24 @@ async function switchToAsync() {
 			launchTime: dockerTime.getTime() - launchTime.getTime(),
 			healthTime: healthyTime.getTime() - dockerTime.getTime(),
 			stopTime: dockerStopTime.getTime() - loadTestEndTime.getTime(),
+			tests: [
+				{
+					name: 'example',
+					subtests: [
+						{
+							config: {
+								parallelProcesses: 1,
+								concurrency: 1,
+								totalRequestsToSend: 1,
+								route: '/healthcheck',
+							},
+							trials: [exampleSample],
+						}
+					]
+				}
+			]
 		};
-		console.log('Application Report ', report);
+		console.log(config.name, ': Application Report : ', JSON.stringify(report));
 	};
 
 	// Close resources
