@@ -70,15 +70,15 @@ async function switchToAsync() {
 
 		// Wait for healthcheck to make sure the service is running
 		appDebug(config.name, 'Waiting for to become healthy');
-		const healthyTimeout = setTimeout(() => {
-			console.error(`Application ${config.name} failed to become healthy in the alotted time`);
-			execSync(`docker stop rest-benchmark-${config.name} && docker rm rest-benchmark-${config.name}`);
-			process.exit(1);
-		}, 30000); // 15 seconds from image launch to becoming healthy.
+		// const healthyTimeout = setTimeout(() => {
+		// 	console.error(`Application ${config.name} failed to become healthy in the alotted time`);
+		// 	execSync(`docker stop rest-benchmark-${config.name} && docker rm rest-benchmark-${config.name}`);
+		// 	process.exit(1);
+		// }, 30000); // 15 seconds from image launch to becoming healthy.
 		while(!(await Api.healthcheck(config.https ?? false, remoteHost, config.httpPort ?? 8080, '/healthcheck'))) {
 			await Utility.sleep(25);
 		}
-		clearTimeout(healthyTimeout);
+		// clearTimeout(healthyTimeout);
 		const healthyTime = new Date();
 		appDebug(config.name, 'Healthy. Collecting idle data');
 

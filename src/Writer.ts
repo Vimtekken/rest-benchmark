@@ -10,6 +10,11 @@ interface ProcessedReports {
 		max: number;
 		config: Tests.SingleTestConfig;
 	};
+	rps: {
+		[test: string]: {
+			[subtest: number]: number;
+		}
+	}
 }
 
 function processData(reports: ApplicationReport[]): ProcessedReports[] {
@@ -18,24 +23,34 @@ function processData(reports: ApplicationReport[]): ProcessedReports[] {
 	reports.forEach((report) => {
 		let maxRps = 0;
 		let config: Tests.TestSampleConfig | null = null;
+		let newReport: any = {
+			application: report.application,
+			rps: {},
+		};
 
 		report.tests.forEach((test) => {
-			test.subtests.forEach((subtest) => {
+			newReport.rps[`test-${test.name}`] = {} as any;
+			for (let i = 0; i < test.subtests.length; i += 1) {
+				const subtest = test.subtests[i];
+				let subtestMaxRps = 0;
 				subtest.trials.forEach((trial) => {
 					if (trial.apache?.requests.rps || 0 > maxRps) {
 						maxRps = trial.apache?.requests.rps || 0;
 						config = subtest.config;
 					}
+					if (trial.apache?.requests.rps || 0 > subtestMaxRps) {
+						subtestMaxRps = trial.apache?.requests.rps || 0;
+					}
 				});
-			});
+				console.log(`Max rps for subtest test-${test.name} `, subtestMaxRps);
+				newReport.rps[`test-${test.name}`][i] = subtestMaxRps;
+			};
 		});
-		processedReports.push({
-			application: report.application,
-			rpsMax: {
-				max: maxRps,
-				config,
-			}
-		});
+		newReport.rpsMax = {
+			max: maxRps,
+			config,
+		};
+		processedReports.push(newReport);
 	});
 
 	return processedReports;
