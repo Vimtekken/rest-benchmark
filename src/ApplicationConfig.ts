@@ -19,6 +19,6 @@ const config: ApplicationConfig[] = [
 		httpPort: 8080,
 		https: false,
 	},
-]
+];
 
 export default config;

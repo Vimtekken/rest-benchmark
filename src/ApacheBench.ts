@@ -1,17 +1,22 @@
+import {
+	ApacheData,
+	ConnectTimeData,
+	ConnectTimes,
+	DataTransfers,
+	RequestData,
+} from './interfaces/Apache';
 import { execSync } from 'child_process';
-
-import { ApacheData, ConnectTimeData, DataTransfers, RequestData, ConnectTimes } from './interfaces/Apache';
 
 const connectionRegexes = {
 	connect: /Connect:\s*([\d.]*)\s*([\d.]*)\s*([\d.]*)\s*([\d.]*)\s*([\d.]*)/gi, // number per group
 	processing: /Processing:\s*([\d.]*)\s*([\d.]*)\s*([\d.]*)\s*([\d.]*)\s*([\d.]*)/gi, // number per group
 	waiting: /Waiting:\s*([\d.]*)\s*([\d.]*)\s*([\d.]*)\s*([\d.]*)\s*([\d.]*)/gi, // number per group
 	total: /Total:\s*([\d.]*)\s*([\d.]*)\s*([\d.]*)\s*([\d.]*)\s*([\d.]*)/gi, // number per group
-}
+};
 const dataRegexes = {
 	totalTransferred: /Total transferred:\s*([\d.]* .*\b)/gi, // string
 	transferRate: /Transfer rate:\s*([\d.]* .*\b)/gi, // string
-}
+};
 const requestRegexes = {
 	completeRequsts: /Complete requests:\s*([\d.]*)/gi, // number
 	failedRequsts: /Failed requests:\s*([\d.]*)/gi, // number
@@ -19,7 +24,7 @@ const requestRegexes = {
 	rps: /Requests per second:\s*([\d.]*)/gi, // number
 	timePerRequest: /Time per request:\s*([\d.]* .*\b)/gi, // string, more than one match. First is mean. Use that.
 	duration: /Time taken for tests:\s*([\d.]*)/gi, // number
-}
+};
 
 function extractGroup1Number(abLog: string, regex: RegExp): number {
 	const matches: RegExpExecArray | null = regex.exec(abLog);
@@ -55,7 +60,7 @@ function extractConnectData(abLog: string, regex: RegExp): ConnectTimeData {
 		sd: matches.length > 3 && matches[3] ? parseInt(matches[3], 10) : 0,
 		median: matches.length > 4 && matches[4] ? parseInt(matches[4], 10) : 0,
 		max: matches.length > 5 && matches[5] ? parseInt(matches[5], 10) : 0,
-	}
+	};
 }
 
 function extractConnectTimes(abLog: string): ConnectTimes {
@@ -64,7 +69,7 @@ function extractConnectTimes(abLog: string): ConnectTimes {
 		processing: extractConnectData(abLog, new RegExp(connectionRegexes.processing)),
 		waiting: extractConnectData(abLog, new RegExp(connectionRegexes.waiting)),
 		total: extractConnectData(abLog, new RegExp(connectionRegexes.total)),
-	}
+	};
 }
 
 // Data
@@ -72,7 +77,7 @@ function extractDataTransfers(abLog: string): DataTransfers {
 	return {
 		totalTransferred: extractGroup1String(abLog, new RegExp(dataRegexes.totalTransferred)),
 		transferRate: extractGroup1String(abLog, new RegExp(dataRegexes.transferRate)),
-	}
+	};
 }
 
 // Requests
@@ -84,7 +89,7 @@ function extractRequests(abLog: string): RequestData {
 		non2xx: extractGroup1Number(abLog, new RegExp(requestRegexes.non2xx)),
 		rps: extractGroup1Number(abLog, new RegExp(requestRegexes.rps)),
 		timePerRequest: extractGroup1Number(abLog, new RegExp(requestRegexes.timePerRequest)),
-	}
+	};
 }
 
 export default function testLoad(host: string, port: number, path: string, concurrency: number, numberOfCalls: number): ApacheData | null {
@@ -94,7 +99,7 @@ export default function testLoad(host: string, port: number, path: string, concu
 			connect: extractConnectTimes(loadResult),
 			data: extractDataTransfers(loadResult),
 			requests: extractRequests(loadResult),
-		}
+		};
 	} catch (error) {
 		console.log('Error performing load test');
 		console.error(error);

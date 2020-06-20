@@ -1,8 +1,7 @@
+import * as Tests from './interfaces/Tests';
+import { ApplicationReport } from './interfaces/ServerReport';
 import fs from 'fs';
 import { parse } from 'json2csv';
-
-import { ApplicationReport } from './interfaces/ServerReport';
-import * as Tests from './interfaces/Tests';
 
 interface ProcessedReports {
 	application: string;
@@ -65,7 +64,7 @@ export default function (reports: ApplicationReport[]) {
 	const processedData = processData(reports);
 	fs.writeFileSync('/out/out-processed.json', JSON.stringify(processedData), { encoding: 'utf-8' });
 	fs.writeFileSync('/out/out-processed.csv', parse(processedData, opts), { encoding: 'utf-8' });
-	
+
 	// Write json out
 	fs.writeFileSync('/out/out-raw.json', JSON.stringify(reports), { encoding: 'utf-8' });
 

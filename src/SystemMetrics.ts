@@ -1,6 +1,10 @@
 import * as Influx from 'influx';
-
-import { MemoryData, CpuData, KernelData, SystemData } from './interfaces/System';
+import {
+	CpuData,
+	KernelData,
+	MemoryData,
+	SystemData,
+} from './interfaces/System';
 import Utility from './Utility';
 
 export default class SystemMetrics {
@@ -37,7 +41,7 @@ export default class SystemMetrics {
 					},
 				],
 			});
-			
+
 			resolve();
 		} catch (error) {
 			if (attempt < SystemMetrics.MAX_ATTEMPTS) {
@@ -49,7 +53,8 @@ export default class SystemMetrics {
 			}
 		}
 	}
- // diskio, mem
+
+	// diskio, mem
 	async getCpuDataForDuration(startTime: Date, endTime: Date): Promise<CpuData> {
 		const raw = await this.influx?.query(`
 			select * from cpu

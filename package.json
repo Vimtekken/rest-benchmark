@@ -2,7 +2,6 @@
   "author": "Vimtekken",
   "dependencies": {
     "chalk": "4.0.0",
-    "debug": "4.1.1",
     "dotenv": "8.2.0",
     "influx": "5.5.1",
     "loglevel": "1.6.8",
@@ -14,7 +13,6 @@
   },
   "description": "Benchmarking the HTTP handling of multiple REST frameworks",
   "devDependencies": {
-    "@types/debug": "4.1.5",
     "@types/request-promise-native": "1.0.17",
     "@typescript-eslint/eslint-plugin": "3.3.0",
     "@typescript-eslint/parser": "3.3.0",
