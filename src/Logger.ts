@@ -1,8 +1,8 @@
-import Chalk from 'chalk';
 import LogLevel, { LogLevelDesc } from 'loglevel';
+import Chalk from 'chalk';
+import Environment from './Environment';
 import LogLevelMessagePrefix from 'loglevel-message-prefix';
 
-import Environment from './Environment';
 
 export default class Logger {
 	private debugLog: LogLevel.Logger;
