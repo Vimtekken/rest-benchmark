@@ -28,6 +28,8 @@
     "@typescript-eslint/camelcase": 1,
     "curly": [2, "all"],
     "import/extensions": ["error", "never"],
+    "import/order": 0,
+    "indent": ["error", "tab"],
     "max-classes-per-file": ["error", 5],
     "max-len": [
       "error",
@@ -41,7 +43,10 @@
         "ignoreRegExpLiterals": true
       }
     ],
+    "no-await-in-loop": 0,
+    "no-console": 0,
     "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
+    "no-tabs": 0,
     "no-underscore-dangle": 2,
     "prefer-destructuring": [
       "error",
@@ -49,6 +54,10 @@
         "object": true,
         "array": false
       }
-    ]
+    ],
+    "sort-imports": ["error", {
+      "ignoreCase": true,
+      "memberSyntaxSortOrder": ["none", "all", "multiple", "single"]
+    }]
   }
 }

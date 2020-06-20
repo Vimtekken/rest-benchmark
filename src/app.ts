@@ -1,12 +1,10 @@
-import Debug from 'debug';
-import { execSync } from 'child_process';
-import fs from 'fs';
-
 import Api from './HealthChecker';
 import ApplicationConfig from './ApplicationConfig';
 import { ApplicationReport } from './interfaces/ServerReport';
-import { SystemData } from './interfaces/System';
+import Debug from 'debug';
+import { execSync } from 'child_process';
 import Monitoring from './monitoring';
+import { SystemData } from './interfaces/System';
 import SystemMetrics from './SystemMetrics';
 import Tester from './Tester';
 import Utility from './Utility';
@@ -75,7 +73,7 @@ async function switchToAsync() {
 		// 	execSync(`docker stop rest-benchmark-${config.name} && docker rm rest-benchmark-${config.name}`);
 		// 	process.exit(1);
 		// }, 30000); // 15 seconds from image launch to becoming healthy.
-		while(!(await Api.healthcheck(config.https ?? false, remoteHost, config.httpPort ?? 8080, '/healthcheck'))) {
+		while (!(await Api.healthcheck(config.https ?? false, remoteHost, config.httpPort ?? 8080, '/healthcheck'))) {
 			await Utility.sleep(25);
 		}
 		// clearTimeout(healthyTimeout);
@@ -107,7 +105,7 @@ async function switchToAsync() {
 			tests,
 		};
 		applicationReports.push(report);
-	};
+	}
 
 	// Wrtie report data to output
 	Writer(applicationReports);

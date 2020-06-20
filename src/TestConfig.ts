@@ -30,12 +30,12 @@ const config: TestConfig = {
 					totalRequestsToSend: 10000,
 					route: '/healthcheck',
 				},
-				{
-					parallelProcesses: 1,
-					concurrency: 256,
-					totalRequestsToSend: 10000,
-					route: '/healthcheck',
-				},
+				// {
+				// 	parallelProcesses: 1,
+				// 	concurrency: 256,
+				// 	totalRequestsToSend: 10000,
+				// 	route: '/healthcheck',
+				// },
 				// {
 				// 	parallelProcesses: 1,
 				// 	concurrency: 512,
