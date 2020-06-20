@@ -33,11 +33,11 @@ function processData(reports: ApplicationReport[]): ProcessedReports[] {
 				const subtest = test.subtests[i];
 				let subtestMaxRps = 0;
 				subtest.trials.forEach((trial) => {
-					if (trial.apache?.requests.rps || 0 > maxRps) {
+					if ((trial.apache?.requests.rps || 0) > maxRps) {
 						maxRps = trial.apache?.requests.rps || 0;
-						config = subtest.config;
+						config = subtest.config; // eslint-disable-line prefer-destructuring
 					}
-					if (trial.apache?.requests.rps || 0 > subtestMaxRps) {
+					if ((trial.apache?.requests.rps || 0) > subtestMaxRps) {
 						subtestMaxRps = trial.apache?.requests.rps || 0;
 					}
 				});
@@ -55,7 +55,7 @@ function processData(reports: ApplicationReport[]): ProcessedReports[] {
 	return processedReports;
 }
 
-export default function (reports: ApplicationReport[]) {
+export default function writeReports(reports: ApplicationReport[]): void {
 	const opts = {
 		flatten: true,
 	};

@@ -45,6 +45,7 @@
     ],
     "no-await-in-loop": 0,
     "no-console": 0,
+    "no-loop-func": 0,
     "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
     "no-tabs": 0,
     "no-underscore-dangle": 2,

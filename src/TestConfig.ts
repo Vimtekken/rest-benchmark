@@ -24,12 +24,12 @@ const config: TestConfig = {
 					totalRequestsToSend: 10000,
 					route: '/healthcheck',
 				},
-				// {
-				// 	parallelProcesses: 1,
-				// 	concurrency: 128,
-				// 	totalRequestsToSend: 10000,
-				// 	route: '/healthcheck',
-				// },
+				{
+					parallelProcesses: 1,
+					concurrency: 128,
+					totalRequestsToSend: 10000,
+					route: '/healthcheck',
+				},
 				// {
 				// 	parallelProcesses: 1,
 				// 	concurrency: 256,
@@ -71,12 +71,12 @@ const config: TestConfig = {
 					totalRequestsToSend: 10000,
 					route: '/healthcheck',
 				},
-				// {
-				// 	parallelProcesses: 1,
-				// 	concurrency: 64,
-				// 	totalRequestsToSend: 50000,
-				// 	route: '/healthcheck',
-				// },
+				{
+					parallelProcesses: 1,
+					concurrency: 64,
+					totalRequestsToSend: 50000,
+					route: '/healthcheck',
+				},
 				// {
 				// 	parallelProcesses: 1,
 				// 	concurrency: 64,
