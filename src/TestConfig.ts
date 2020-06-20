@@ -24,12 +24,12 @@ const config: TestConfig = {
 					totalRequestsToSend: 10000,
 					route: '/healthcheck',
 				},
-				{
-					parallelProcesses: 1,
-					concurrency: 128,
-					totalRequestsToSend: 10000,
-					route: '/healthcheck',
-				},
+				// {
+				// 	parallelProcesses: 1,
+				// 	concurrency: 128,
+				// 	totalRequestsToSend: 10000,
+				// 	route: '/healthcheck',
+				// },
 				// {
 				// 	parallelProcesses: 1,
 				// 	concurrency: 256,
@@ -48,7 +48,7 @@ const config: TestConfig = {
 				// 	totalRequestsToSend: 10000,
 				// 	route: '/healthcheck',
 				// },
-			]
+			],
 		},
 		{
 			name: 'total requests',
@@ -95,9 +95,9 @@ const config: TestConfig = {
 				// 	totalRequestsToSend: 1000000,
 				// 	route: '/healthcheck',
 				// },
-			]
-		}
-	]
-}
+			],
+		},
+	],
+};
 
 export default config;

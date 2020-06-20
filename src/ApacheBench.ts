@@ -6,6 +6,9 @@ import {
 	RequestData,
 } from './interfaces/Apache';
 import { execSync } from 'child_process';
+import Logger from './Logger';
+
+const log = new Logger('rb', 'ApacheBench');
 
 const connectionRegexes = {
 	connect: /Connect:\s*([\d.]*)\s*([\d.]*)\s*([\d.]*)\s*([\d.]*)\s*([\d.]*)/gi, // number per group
@@ -94,14 +97,14 @@ function extractRequests(abLog: string): RequestData {
 
 export default function testLoad(host: string, port: number, path: string, concurrency: number, numberOfCalls: number): ApacheData | null {
 	try {
-		const loadResult: string = String(execSync(`ab -c ${concurrency} -n ${numberOfCalls} ${host}:${port}${path}`));
+		const loadResult: string = String(execSync(`ab -c ${concurrency} -n ${numberOfCalls} ${host}:${port}${path}`, { stdio: 'pipe' }));
 		return {
 			connect: extractConnectTimes(loadResult),
 			data: extractDataTransfers(loadResult),
 			requests: extractRequests(loadResult),
 		};
 	} catch (error) {
-		console.log('Error performing load test');
+		log.error('Error performing load test');
 		console.error(error);
 		return null;
 	}

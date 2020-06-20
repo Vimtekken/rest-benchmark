@@ -22,7 +22,7 @@ function processData(reports: ApplicationReport[]): ProcessedReports[] {
 	reports.forEach((report) => {
 		let maxRps = 0;
 		let config: Tests.TestSampleConfig | null = null;
-		let newReport: any = {
+		const newReport: any = {
 			application: report.application,
 			rps: {},
 		};
@@ -41,9 +41,9 @@ function processData(reports: ApplicationReport[]): ProcessedReports[] {
 						subtestMaxRps = trial.apache?.requests.rps || 0;
 					}
 				});
-				console.log(`Max rps for subtest test-${test.name} `, subtestMaxRps);
+				console.log(`Max rps on ${report.application} for subtest test-${test.name} `, subtestMaxRps);
 				newReport.rps[`test-${test.name}`][i] = subtestMaxRps;
-			};
+			}
 		});
 		newReport.rpsMax = {
 			max: maxRps,
