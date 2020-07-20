@@ -1,4 +1,3 @@
-
 export interface ConnectTimeData {
 	min: number;
 	mean: number;

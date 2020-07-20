@@ -2,6 +2,7 @@ import * as Tests from './interfaces/Tests';
 import { ApplicationReport } from './interfaces/ServerReport';
 import fs from 'fs';
 import { parse } from 'json2csv';
+import Utility from './Utility';
 
 interface ProcessedReports {
 	application: string;
@@ -32,7 +33,9 @@ function processData(reports: ApplicationReport[]): ProcessedReports[] {
 			for (let i = 0; i < test.subtests.length; i += 1) {
 				const subtest = test.subtests[i];
 				let subtestMaxRps = 0;
+				const allSubRps: number[] = [];
 				subtest.trials.forEach((trial) => {
+					allSubRps.push(trial.apache?.requests.rps || 0);
 					if ((trial.apache?.requests.rps || 0) > maxRps) {
 						maxRps = trial.apache?.requests.rps || 0;
 						config = subtest.config; // eslint-disable-line prefer-destructuring
@@ -41,7 +44,14 @@ function processData(reports: ApplicationReport[]): ProcessedReports[] {
 						subtestMaxRps = trial.apache?.requests.rps || 0;
 					}
 				});
-				console.log(`Max rps on ${report.application} for subtest test-${test.name} `, subtestMaxRps);
+				console.log(
+					`Max rps on ${report.application} for subtest test-${test.name} `,
+					subtestMaxRps,
+					'average',
+					Utility.math.average(allSubRps),
+					'deviation',
+					Utility.math.standardDeviation(allSubRps),
+				);
 				newReport.rps[`test-${test.name}`][i] = subtestMaxRps;
 			}
 		});

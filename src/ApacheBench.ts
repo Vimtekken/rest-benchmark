@@ -5,7 +5,7 @@ import {
 	DataTransfers,
 	RequestData,
 } from './interfaces/Apache';
-import { execSync } from 'child_process';
+import { exec } from 'child_process';
 import Logger from './Logger';
 
 const log = new Logger('rb', 'ApacheBench');
@@ -95,17 +95,25 @@ function extractRequests(abLog: string): RequestData {
 	};
 }
 
-export default function testLoad(host: string, port: number, path: string, concurrency: number, numberOfCalls: number): ApacheData | null {
-	try {
-		const loadResult: string = String(execSync(`ab -c ${concurrency} -n ${numberOfCalls} ${host}:${port}${path}`, { stdio: 'pipe' }));
-		return {
-			connect: extractConnectTimes(loadResult),
-			data: extractDataTransfers(loadResult),
-			requests: extractRequests(loadResult),
-		};
-	} catch (error) {
-		log.error('Error performing load test');
-		console.error(error);
-		return null;
-	}
+export default async function testLoad(
+	host: string,
+	port: number,
+	path: string,
+	concurrency: number,
+	numberOfCalls: number,
+): Promise<ApacheData | null> {
+	return new Promise<ApacheData | null>((resolve) => {
+		exec(`ab -c ${concurrency} -n ${numberOfCalls} ${host}:${port}${path}`, {}, (error, stdout) => {
+			if (error) {
+				log.error('Error performing load test', error);
+				resolve(null);
+			}
+			const loadResult = String(stdout);
+			resolve({
+				connect: extractConnectTimes(loadResult),
+				data: extractDataTransfers(loadResult),
+				requests: extractRequests(loadResult),
+			});
+		});
+	});
 }

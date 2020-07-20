@@ -64,16 +64,11 @@ async function switchToAsync() {
 		// Start app docker container
 		const launchTime = new Date();
 		appLog.info(config.name, 'Launching ');
-		execSync(`docker run -d -p ${config.httpPort}:${config.httpPort} --name rest-benchmark-${config.name} rest-benchmark-${config.name}:latest`);
+		execSync(`docker run -d --cpus=2 --memory=1g -p ${config.httpPort}:${config.httpPort} --name rest-benchmark-${config.name} rest-benchmark-${config.name}:latest`);
 		const dockerTime = new Date();
 
 		// Wait for healthcheck to make sure the service is running
 		appLog.info(config.name, 'Waiting for to become healthy');
-		// const healthyTimeout = setTimeout(() => {
-		// 	console.error(`Application ${config.name} failed to become healthy in the alotted time`);
-		// 	execSync(`docker stop rest-benchmark-${config.name} && docker rm rest-benchmark-${config.name}`);
-		// 	process.exit(1);
-		// }, 30000); // 15 seconds from image launch to becoming healthy.
 		while (!(await Api.healthcheck(config.https ?? false, remoteHost, config.httpPort ?? 8080, '/healthcheck'))) {
 			await Utility.sleep(25);
 		}
