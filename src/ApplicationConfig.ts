@@ -5,6 +5,13 @@ interface ApplicationConfig {
 	source: string;
 }
 
+// @todo Add deno
+// @todo Investigate thread per core dart server
+// @todo Fix pistache problem?
+// @todo Java?
+// @todo lithium
+// @todo Rust/rocket
+// @todo look into https://github.com/virtuozzo/httpress instead of apache-bench
 const config: ApplicationConfig[] = [
 	{
 		name: 'cpp-drogon',
@@ -28,6 +35,12 @@ const config: ApplicationConfig[] = [
 	{
 		name: 'dart-raw',
 		source: 'servers/dart/raw',
+		httpPort: 8080,
+		https: false,
+	},
+	{
+		name: 'dart-raw-native',
+		source: 'servers/dart/raw-native',
 		httpPort: 8080,
 		https: false,
 	},

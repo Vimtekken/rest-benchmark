@@ -101,9 +101,11 @@ export default async function testLoad(
 	path: string,
 	concurrency: number,
 	numberOfCalls: number,
+	keepAlive: boolean = false,
 ): Promise<ApacheData | null> {
 	return new Promise<ApacheData | null>((resolve) => {
-		exec(`ab -c ${concurrency} -n ${numberOfCalls} ${host}:${port}${path}`, {}, (error, stdout) => {
+		// -k option to allow keep-alive
+		exec(`ab -c ${concurrency} -n ${numberOfCalls}${keepAlive ? ' -k ' : ' '}${host}:${port}${path}`, {}, (error, stdout) => {
 			if (error) {
 				log.error('Error performing load test', error);
 				resolve(null);

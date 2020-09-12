@@ -95,6 +95,7 @@ export default async function tester(name: string, metrics: SystemMetrics, host:
 						subtest.route,
 						subtest.concurrency,
 						subtest.totalRequestsToSend / subtest.parallelProcesses,
+						subtest.keepAlive,
 					));
 				}
 				const apacheData: (ApacheData | null)[] = await Promise.all(dataPromises);

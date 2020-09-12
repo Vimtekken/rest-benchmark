@@ -74,7 +74,8 @@ async function switchToAsync() {
 		} catch (error) {
 			// Most likely image didn't already exist
 		}
-		execSync(`docker run -d --cpus=2 --memory=2g -p ${config.httpPort}:${config.httpPort} --name rest-benchmark-${config.name} rest-benchmark-${config.name}:latest`);
+		// --memory=2g --memory-swap=10g
+		execSync(`docker run -d --cpus=2 -p ${config.httpPort}:${config.httpPort} --name rest-benchmark-${config.name} rest-benchmark-${config.name}:latest`);
 		const dockerTime = new Date();
 
 		// Wait for healthcheck to make sure the service is running

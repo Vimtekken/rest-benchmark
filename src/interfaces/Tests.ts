@@ -2,6 +2,8 @@ import * as Sample from './Sample';
 
 export interface TestSampleConfig {
 	concurrency: number;
+	cpuAllocationPercent: number; // (0, 1)
+	keepAlive: boolean;
 	parallelProcesses: number;
 	route: string;
 	totalRequestsToSend: number;
