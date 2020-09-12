@@ -109,6 +109,7 @@ async function switchToAsync() {
 			launchTime: dockerTime.getTime() - launchTime.getTime(),
 			healthTime: healthyTime.getTime() - dockerTime.getTime(),
 			stopTime: dockerStopTime.getTime() - shutdownTime.getTime(),
+			// @todo Add a total time
 			tests,
 		};
 		applicationReports.push(report);
