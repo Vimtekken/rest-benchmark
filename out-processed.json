@@ -1,22 +1,48 @@
 [
 	{
-		"application": "python-flask",
+		"application": "cpp-drogon",
 		"rps": {
 			"test-concurrency": {
-				"0": 1230,
-				"1": 1387,
-				"2": 1378,
-				"3": 1380
+				"0": 4602,
+				"1": 14767,
+				"2": 14936,
+				"3": 14416
 			},
 			"test-total requests": {
-				"0": 1415,
-				"1": 1378,
-				"2": 1362,
-				"3": 1362
+				"0": 14482,
+				"1": 14752,
+				"2": 14715,
+				"3": 14754
 			}
 		},
 		"rpsMax": {
-			"max": 1415,
+			"max": 14936,
+			"config": {
+				"parallelProcesses": 1,
+				"concurrency": 32,
+				"totalRequestsToSend": 10000,
+				"route": "/healthcheck"
+			}
+		}
+	},
+	{
+		"application": "cpp-seastar",
+		"rps": {
+			"test-concurrency": {
+				"0": 4945,
+				"1": 3539,
+				"2": 3435,
+				"3": 4468
+			},
+			"test-total requests": {
+				"0": 9472,
+				"1": 5287,
+				"2": 4640,
+				"3": 4624
+			}
+		},
+		"rpsMax": {
+			"max": 9472,
 			"config": {
 				"parallelProcesses": 1,
 				"concurrency": 64,
@@ -29,46 +55,20 @@
 		"application": "dart-raw",
 		"rps": {
 			"test-concurrency": {
-				"0": 3163,
-				"1": 8459,
-				"2": 8348,
-				"3": 8123
+				"0": 3797,
+				"1": 9503,
+				"2": 9513,
+				"3": 9257
 			},
 			"test-total requests": {
-				"0": 8895,
-				"1": 8554,
-				"2": 8370,
-				"3": 8393
+				"0": 9217,
+				"1": 9120,
+				"2": 9514,
+				"3": 9536
 			}
 		},
 		"rpsMax": {
-			"max": 8895,
-			"config": {
-				"parallelProcesses": 1,
-				"concurrency": 64,
-				"totalRequestsToSend": 1000,
-				"route": "/healthcheck"
-			}
-		}
-	},
-	{
-		"application": "node-express",
-		"rps": {
-			"test-concurrency": {
-				"0": 2995,
-				"1": 5691,
-				"2": 6059,
-				"3": 6154
-			},
-			"test-total requests": {
-				"0": 6157,
-				"1": 6089,
-				"2": 6145,
-				"3": 6185
-			}
-		},
-		"rpsMax": {
-			"max": 6185,
+			"max": 9536,
 			"config": {
 				"parallelProcesses": 1,
 				"concurrency": 64,
@@ -78,27 +78,105 @@
 		}
 	},
 	{
-		"application": "node-express-cluster",
+		"application": "go-gin",
 		"rps": {
 			"test-concurrency": {
-				"0": 1776,
-				"1": 3723,
-				"2": 4599,
-				"3": 4877
+				"0": 4067,
+				"1": 12975,
+				"2": 12211,
+				"3": 13066
 			},
 			"test-total requests": {
-				"0": 6799,
-				"1": 4983,
-				"2": 4971,
-				"3": 4192
+				"0": 13721,
+				"1": 13311,
+				"2": 13778,
+				"3": 13801
 			}
 		},
 		"rpsMax": {
-			"max": 6799,
+			"max": 13801,
+			"config": {
+				"parallelProcesses": 1,
+				"concurrency": 64,
+				"totalRequestsToSend": 50000,
+				"route": "/healthcheck"
+			}
+		}
+	},
+	{
+		"application": "node-express",
+		"rps": {
+			"test-concurrency": {
+				"0": 3499,
+				"1": 6147,
+				"2": 6609,
+				"3": 6493
+			},
+			"test-total requests": {
+				"0": 6209,
+				"1": 6607,
+				"2": 6500,
+				"3": 6548
+			}
+		},
+		"rpsMax": {
+			"max": 6609,
+			"config": {
+				"parallelProcesses": 1,
+				"concurrency": 32,
+				"totalRequestsToSend": 10000,
+				"route": "/healthcheck"
+			}
+		}
+	},
+	{
+		"application": "node-express-cluster",
+		"rps": {
+			"test-concurrency": {
+				"0": 1920,
+				"1": 998,
+				"2": 1128,
+				"3": 1156
+			},
+			"test-total requests": {
+				"0": 5230,
+				"1": 1437,
+				"2": 1249,
+				"3": 1195
+			}
+		},
+		"rpsMax": {
+			"max": 5230,
 			"config": {
 				"parallelProcesses": 1,
 				"concurrency": 64,
 				"totalRequestsToSend": 1000,
+				"route": "/healthcheck"
+			}
+		}
+	},
+	{
+		"application": "python-flask",
+		"rps": {
+			"test-concurrency": {
+				"0": 859,
+				"1": 1219,
+				"2": 1269,
+				"3": 1638
+			},
+			"test-total requests": {
+				"0": 1630,
+				"1": 1224,
+				"2": 1220,
+				"3": 1640
+			}
+		},
+		"rpsMax": {
+			"max": 1640,
+			"config": {
+				"parallelProcesses": 1,
+				"concurrency": 64,
+				"totalRequestsToSend": 50000,
 				"route": "/healthcheck"
 			}
 		}
