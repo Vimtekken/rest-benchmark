@@ -23,8 +23,13 @@ if (!remoteHost) {
 }
 
 async function switchToAsync() {
+	process.on('beforeExit', () => {
+		Monitoring.stop();
+	});
+
 	// Launch the monitoring services on the remote host.
 	log.info('Launching monitoring');
+	Monitoring.stop();
 	Monitoring.start();
 
 	// Create system metrics instance
@@ -56,7 +61,7 @@ async function switchToAsync() {
 		appLog.info(config.name, 'Building');
 		const source = `${__dirname}/../${config.source}`;
 		// Consider using no cache on the build for build time measurements.
-		execSync(`docker build -f ${source}/Dockerfile --tag rest-benchmark-${config.name}:latest ${source}`);
+		execSync(`docker build -f ${source}/Dockerfile --tag rest-benchmark-${config.name}:latest ${source}`, { stdio: 'pipe' });
 		appLog.info(config.name, 'Building complete');
 		const buildEnd = new Date();
 
@@ -64,7 +69,12 @@ async function switchToAsync() {
 		// Start app docker container
 		const launchTime = new Date();
 		appLog.info(config.name, 'Launching ');
-		execSync(`docker run -d --cpus=2 --memory=1g -p ${config.httpPort}:${config.httpPort} --name rest-benchmark-${config.name} rest-benchmark-${config.name}:latest`);
+		try {
+			execSync(`docker container rm -f rest-benchmark-${config.name}`);
+		} catch (error) {
+			// Most likely image didn't already exist
+		}
+		execSync(`docker run -d --cpus=2 --memory=2g -p ${config.httpPort}:${config.httpPort} --name rest-benchmark-${config.name} rest-benchmark-${config.name}:latest`);
 		const dockerTime = new Date();
 
 		// Wait for healthcheck to make sure the service is running
