@@ -5,6 +5,7 @@ import Docker from './Docker';
 import Environment from './consts/Environment';
 import Logger from './Logger';
 import Monitoring from './monitoring';
+import Postgres from './postgres';
 import { SystemData } from './interfaces/System';
 import SystemMetrics from './SystemMetrics';
 import Tester from './Tester';
@@ -75,6 +76,11 @@ async function switchToAsync() {
 	process.on('beforeExit', () => {
 		Monitoring.stop();
 	});
+
+	// Launch pg database for tracking results
+	log.info('Launching results database');
+	Postgres.start();
+	await Postgres.clear();
 
 	// Launch the monitoring services on the remote host.
 	log.info('Launching monitoring');

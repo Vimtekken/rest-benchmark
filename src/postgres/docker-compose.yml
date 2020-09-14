@@ -8,4 +8,4 @@ services:
             - POSTGRES_PASSWORD=foobar
             - POSTGRES_DB=bench
         ports:
-			- "45432:5432"
+            - "45432:5432"
