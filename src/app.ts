@@ -5,6 +5,7 @@ import Docker from './Docker';
 import Environment from './consts/Environment';
 import Logger from './Logger';
 import Monitoring from './monitoring';
+import PGAdmin from './pgAdmin';
 import Postgres from './postgres';
 import { SystemData } from './interfaces/System';
 import SystemMetrics from './SystemMetrics';
@@ -80,7 +81,16 @@ async function switchToAsync() {
 	// Launch pg database for tracking results
 	log.info('Launching results database');
 	Postgres.start();
+	await Postgres.awaitHealthy();
 	await Postgres.clear();
+
+	if (Environment.SHOULD_LAUNCH_PG_ADMIN) {
+		log.info('Launching PGAdmin4');
+		// PGAdmin.stop();
+		PGAdmin.start();
+	} else {
+		PGAdmin.stop(); // In case we already were running it.
+	}
 
 	// Launch the monitoring services on the remote host.
 	log.info('Launching monitoring');

@@ -1,9 +1,11 @@
 import Environment from '../consts/Environment';
 import { execSync } from 'child_process';
 import Knex from 'knex';
+import Logger from '../Logger';
 import PostgresConsts from '../consts/Postgres';
 import Utility from '../Utility';
 
+const log = new Logger('rb', 'postgres');
 const waitInterval = 25;
 
 export default class Postgres {
@@ -14,8 +16,13 @@ export default class Postgres {
 		let healthy = false;
 		while (!healthy) {
 			await Utility.sleep(waitInterval);
-			const result = await this.connection.raw('SELECT 1 AS healthy;');
-			healthy = result.rows?.length && result.rows[0].healthy === 1;
+			try {
+				const result = await this.connection.raw('SELECT 1 AS healthy;');
+				healthy = result.rows?.length && result.rows[0].healthy === 1;
+			} catch (error) {
+				log.debug(error);
+				// Not booted yet.
+			}
 		}
 		return Date.now() - start;
 	}
@@ -25,10 +32,12 @@ export default class Postgres {
 	}
 
 	static get connection(): Knex {
-		if (!this.knex) {
+		if (this.knex === undefined) {
+			const connection = `postgres://postgres:foobar@${Environment.REMOTE_HOST}:45432/bench`;
+			log.debug('No connection found, making new connection to', connection);
 			this.knex = Knex({
 				client: 'pg',
-				connection: `${Environment.REMOTE_HOST}:45432`,
+				connection,
 				searchPath: 'public',
 				pool: {
 					min: 5,
