@@ -48,8 +48,13 @@ export default class Postgres {
 		return this.knex;
 	}
 
+	static build(): void {
+		execSync(`docker-compose -f ${__dirname}/docker-compose.yml build`, { stdio: 'pipe' });
+	}
+
 	static start(): void {
-		execSync(`docker-compose -f ${__dirname}/docker-compose.yml up --build -d`, { stdio: 'ignore' });
+		Postgres.build();
+		execSync(`docker-compose -f ${__dirname}/docker-compose.yml up -d`, { stdio: 'pipe' });
 	}
 
 	static stop(): void {

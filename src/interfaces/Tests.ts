@@ -26,5 +26,6 @@ export interface SubtestResult {
 
 export interface TestResult {
 	name: string; // Name of test
+	configName: string;
 	subtests: SubtestResult[];
 }

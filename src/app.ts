@@ -81,12 +81,12 @@ async function switchToAsync() {
 	// Launch pg database for tracking results
 	log.info('Launching results database');
 	Postgres.start();
+	await Utility.sleep(100);
 	await Postgres.awaitHealthy();
 	await Postgres.clear();
 
 	if (Environment.SHOULD_LAUNCH_PG_ADMIN) {
 		log.info('Launching PGAdmin4');
-		// PGAdmin.stop();
 		PGAdmin.start();
 	} else {
 		PGAdmin.stop(); // In case we already were running it.

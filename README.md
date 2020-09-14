@@ -13,3 +13,10 @@ sudo sysctl -p /etc/sysctl.conf
 ## Pistache.io
 For some readon pistache.io doesn't connect/respond well to
 apache bench. Do not know why.
+
+## Known Bugs
+First launch of the test suite will result in a failure to connect
+to the results database. Stopping the execution and restarting will
+fix the issue. Seems that the first run dodesn't launch the results
+database properly. I am not sure why this only happens on the first
+run after a clean.
