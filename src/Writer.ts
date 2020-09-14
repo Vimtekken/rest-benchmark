@@ -65,7 +65,7 @@ function processData(reports: ApplicationReport[]): ProcessedReports[] {
 	return processedReports;
 }
 
-export default function writeReports(reports: ApplicationReport[]): void {
+export function writeReportsOld(reports: ApplicationReport[]): void {
 	const opts = {
 		flatten: true,
 	};
@@ -97,4 +97,9 @@ export default function writeReports(reports: ApplicationReport[]): void {
 		report.tests = newTests;
 	});
 	fs.writeFileSync('/out/out-raw.csv', parse(csvData, opts), { encoding: 'utf-8' });
+}
+
+// Loads relavent information form postgres and drops the data out into json, csv formats
+export default async function writeReports(): Promise<void> {
+	
 }

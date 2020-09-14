@@ -112,7 +112,7 @@ async function switchToAsync() {
 	}
 
 	// Wrtie report data to output
-	Writer(applicationReports);
+	Writer();
 
 	// Close resources
 	log.info('Stopping monitoring');
