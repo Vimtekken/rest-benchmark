@@ -1,7 +1,8 @@
-import DefaultAppConfig, { ApplicationConfig } from './ApplicationConfig';
+import ApplicationConfig from './interfaces/ApplicationConfig';
 import { ApplicationReport } from './interfaces/ServerReport';
+import DefaultAppConfig from './consts/ApplicationConfig';
 import Docker from './Docker';
-import Environment from './Environment';
+import Environment from './consts/Environment';
 import Logger from './Logger';
 import Monitoring from './monitoring';
 import { SystemData } from './interfaces/System';

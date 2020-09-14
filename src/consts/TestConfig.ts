@@ -1,4 +1,4 @@
-import { TestConfig } from './interfaces/Tests';
+import { TestConfig } from '../interfaces/Tests';
 
 const config: TestConfig = {
 	numberOfTrails: 3,

@@ -10,7 +10,7 @@ import ApacheBench from './ApacheBench';
 import Logger from './Logger';
 import { Sample } from './interfaces/Sample';
 import SystemMetrics from './SystemMetrics';
-import TestConfig from './TestConfig';
+import TestConfig from './consts/TestConfig';
 import Utility from './Utility';
 
 // @todo fix the averages for this. They are going to be approx but not accurate

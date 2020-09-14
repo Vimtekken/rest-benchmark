@@ -1,9 +1,4 @@
-export interface ApplicationConfig {
-	httpPort: number;
-	https: boolean;
-	name: string;
-	source: string;
-}
+import ApplicationConfig from '../interfaces/ApplicationConfig';
 
 // @todo Add deno
 // @todo Investigate thread per core dart server?

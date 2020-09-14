@@ -1,4 +1,4 @@
-import { ApplicationConfig } from './ApplicationConfig';
+import ApplicationConfig from './interfaces/ApplicationConfig';
 import { execSync } from 'child_process';
 import HealthChecker from './HealthChecker';
 import Logger from './Logger';

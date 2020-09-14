@@ -1,6 +1,6 @@
 import LogLevel, { LogLevelDesc } from 'loglevel';
 import Chalk from 'chalk';
-import Environment from './Environment';
+import Environment from './consts/Environment';
 import LogLevelMessagePrefix from 'loglevel-message-prefix';
 
 
