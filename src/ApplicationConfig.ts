@@ -6,11 +6,12 @@ interface ApplicationConfig {
 }
 
 // @todo Add deno
-// @todo Investigate thread per core dart server
+// @todo Investigate thread per core dart server?
 // @todo Fix pistache problem?
 // @todo Java?
-// @todo lithium
-// @todo Rust/rocket
+// @todo lithium?
+// @todo Rust/rocket?
+// @todo Obj-c?
 // @todo look into https://github.com/virtuozzo/httpress instead of apache-bench
 const config: ApplicationConfig[] = [
 	{
