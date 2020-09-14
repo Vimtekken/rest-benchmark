@@ -38,22 +38,20 @@ async function switchToAsync() {
 	await metrics.initComplete;
 
 	// Filter for application name or use all applications
+	let applicationConfigurations = ApplicationConfig;
 	if (process.argv?.length > 2) {
 		const apps: string[] = process.argv.slice(2);
 		log.debug('Testing applications ', apps);
-		Object.keys(ApplicationConfig).forEach((key) => {
-			if (!apps.includes(ApplicationConfig[key].name)) {
-				delete ApplicationConfig[key];
-			}
-		});
+		applicationConfigurations = ApplicationConfig.filter((config) => apps.indexOf(config.name) === 0);
 	} else {
 		log.debug('Testing applications: ', ApplicationConfig.map((config) => config.name));
 	}
 
 	// Start the tests, We use this type of loop here so we can make sure all async calls are handled in order sequentially
 	const applicationReports: ApplicationReport[] = [];
-	for (let i = 0; i < ApplicationConfig.length; i += 1) {
-		const config = ApplicationConfig[i];
+	for (let i = 0; i < applicationConfigurations.length; i += 1) {
+		const config = applicationConfigurations[i];
+		log.debug('Running tests for config:', config);
 		const appLog = new Logger('rb', config.name);
 
 		// Build the target application
