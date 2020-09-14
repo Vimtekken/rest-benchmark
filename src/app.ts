@@ -1,8 +1,7 @@
-import Api from './HealthChecker';
-import ApplicationConfig from './ApplicationConfig';
+import DefaultAppConfig, { ApplicationConfig } from './ApplicationConfig';
 import { ApplicationReport } from './interfaces/ServerReport';
+import Docker from './Docker';
 import Environment from './Environment';
-import { execSync } from 'child_process';
 import Logger from './Logger';
 import Monitoring from './monitoring';
 import { SystemData } from './interfaces/System';
@@ -22,6 +21,55 @@ if (!remoteHost) {
 	process.exit(1);
 }
 
+function getApplicationConfigs(): ApplicationConfig[] {
+	if (process.argv?.length > 2) {
+		const apps: string[] = process.argv.slice(2);
+		log.debug('Testing applications ', apps);
+		return DefaultAppConfig.filter((config) => apps.indexOf(config.name) === 0);
+	}
+	log.debug('Testing applications: ', DefaultAppConfig.map((config) => config.name));
+	return DefaultAppConfig;
+}
+
+async function testConfig(config: ApplicationConfig, metrics: SystemMetrics): Promise<ApplicationReport> {
+	log.debug('Running tests for config:', config);
+	const appLog = new Logger('rb', config.name);
+
+	// Docker build + launch
+	const buildTime = Docker.build(config, appLog);
+	const launchTime = Docker.launch(config, appLog);
+
+	// Wait for healthcheck to make sure the service is running
+	appLog.info(config.name, 'Waiting for to become healthy');
+	const healthTime = await Docker.awaitHealthy(config, remoteHost);
+	appLog.info(config.name, 'Healthy. Collecting idle data');
+
+	// Let it idle out to get past init load and also measure idle load
+	const preSleepTime = new Date();
+	await Utility.sleep(5000);
+	const idleMetrics: SystemData = await metrics.getMetricForDuration(preSleepTime, new Date());
+
+	// Do load test
+	appLog.info(config.name, 'Starting load tests');
+	const tests = await Tester(config.name, metrics, remoteHost, config.httpPort);
+	appLog.info(config.name, 'Load tests complete');
+
+	// Close container.
+	appLog.info(config.name, 'Shutting Down');
+	const stopTime = Docker.stop(config);
+
+	return {
+		application: config.name,
+		buildTime,
+		idle: idleMetrics,
+		launchTime,
+		healthTime,
+		stopTime,
+		// @todo Add a total time
+		tests,
+	};
+}
+
 async function switchToAsync() {
 	process.on('beforeExit', () => {
 		Monitoring.stop();
@@ -37,80 +85,13 @@ async function switchToAsync() {
 	log.info('Waiting for monitoring containers to fully boot ...');
 	await metrics.initComplete;
 
-	// Filter for application name or use all applications
-	let applicationConfigurations = ApplicationConfig;
-	if (process.argv?.length > 2) {
-		const apps: string[] = process.argv.slice(2);
-		log.debug('Testing applications ', apps);
-		applicationConfigurations = ApplicationConfig.filter((config) => apps.indexOf(config.name) === 0);
-	} else {
-		log.debug('Testing applications: ', ApplicationConfig.map((config) => config.name));
-	}
+	// Get our run config
+	const applicationConfigurations = getApplicationConfigs();
 
 	// Start the tests, We use this type of loop here so we can make sure all async calls are handled in order sequentially
 	const applicationReports: ApplicationReport[] = [];
 	for (let i = 0; i < applicationConfigurations.length; i += 1) {
-		const config = applicationConfigurations[i];
-		log.debug('Running tests for config:', config);
-		const appLog = new Logger('rb', config.name);
-
-		// Build the target application
-		const buildStart = new Date();
-		appLog.info(config.name, 'Building');
-		const source = `${__dirname}/../${config.source}`;
-		// Consider using no cache on the build for build time measurements.
-		execSync(`docker build -f ${source}/Dockerfile --tag rest-benchmark-${config.name}:latest ${source}`, { stdio: 'pipe' });
-		appLog.info(config.name, 'Building complete');
-		const buildEnd = new Date();
-
-		// Run test on application
-		// Start app docker container
-		const launchTime = new Date();
-		appLog.info(config.name, 'Launching ');
-		try {
-			execSync(`docker container rm -f rest-benchmark-${config.name}`);
-		} catch (error) {
-			// Most likely image didn't already exist
-		}
-		// --memory=2g --memory-swap=10g
-		execSync(`docker run -d --cpus=2 -p ${config.httpPort}:${config.httpPort} --name rest-benchmark-${config.name} rest-benchmark-${config.name}:latest`);
-		const dockerTime = new Date();
-
-		// Wait for healthcheck to make sure the service is running
-		appLog.info(config.name, 'Waiting for to become healthy');
-		while (!(await Api.healthcheck(config.https ?? false, remoteHost, config.httpPort ?? 8080, '/healthcheck'))) {
-			await Utility.sleep(25);
-		}
-		// clearTimeout(healthyTimeout);
-		const healthyTime = new Date();
-		appLog.info(config.name, 'Healthy. Collecting idle data');
-
-		// Let it idle out to get past init load and also measure idle load
-		await Utility.sleep(5000);
-		const idleMetrics: SystemData = await metrics.getMetricForDuration(healthyTime, new Date());
-
-		// Do load test
-		appLog.info(config.name, 'Starting load tests');
-		const tests = await Tester(config.name, metrics, remoteHost, config.httpPort);
-		appLog.info(config.name, 'Load tests complete');
-
-		// Close container.
-		appLog.info(config.name, 'Shutting Down');
-		const shutdownTime = new Date();
-		execSync(`docker stop rest-benchmark-${config.name} && docker rm rest-benchmark-${config.name}`);
-		const dockerStopTime = new Date();
-
-		const report: ApplicationReport = {
-			application: config.name,
-			buildTime: buildEnd.getTime() - buildStart.getTime(),
-			idle: idleMetrics,
-			launchTime: dockerTime.getTime() - launchTime.getTime(),
-			healthTime: healthyTime.getTime() - dockerTime.getTime(),
-			stopTime: dockerStopTime.getTime() - shutdownTime.getTime(),
-			// @todo Add a total time
-			tests,
-		};
-		applicationReports.push(report);
+		applicationReports.push(await testConfig(applicationConfigurations[i], metrics));
 	}
 
 	// Wrtie report data to output

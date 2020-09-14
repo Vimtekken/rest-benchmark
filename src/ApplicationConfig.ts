@@ -1,4 +1,4 @@
-interface ApplicationConfig {
+export interface ApplicationConfig {
 	httpPort: number;
 	https: boolean;
 	name: string;
