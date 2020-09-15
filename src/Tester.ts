@@ -11,7 +11,6 @@ import Logger from './Logger';
 import { Sample } from './interfaces/Sample';
 import SystemMetrics from './SystemMetrics';
 import TestConfig from './consts/TestConfig';
-import TestWriter from './TestDBWriter';
 import Utility from './Utility';
 
 // @todo fix the averages for this. They are going to be approx but not accurate
@@ -106,7 +105,6 @@ export default async function tester(name: string, metrics: SystemMetrics, host:
 					apache: mergeApacheData(apacheData),
 					system: systemStats,
 				});
-				TestWriter(name, test.name, subtestIndex, trials[trials.length - 1]);
 			}
 			subtests.push({
 				config: subtest,
