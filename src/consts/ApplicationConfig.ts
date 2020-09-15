@@ -1,6 +1,5 @@
 import ApplicationConfig from '../interfaces/ApplicationConfig';
 
-// @todo Add deno
 // @todo Investigate thread per core dart server?
 // @todo Fix pistache problem?
 // @todo Java?
@@ -38,6 +37,12 @@ const config: ApplicationConfig[] = [
 		name: 'dart-raw-native',
 		source: 'servers/dart/raw-native',
 		httpPort: 8080,
+		https: false,
+	},
+	{
+		name: 'typescript-deno',
+		source: 'servers/typescript/deno',
+		httpPort: 8000,
 		https: false,
 	},
 	{
