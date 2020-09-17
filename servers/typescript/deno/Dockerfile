@@ -4,4 +4,4 @@ RUN mkdir -p /app
 WORKDIR /app
 ADD ./src /app
 ENTRYPOINT [ "deno" ]
-CMD [ "run", "./main.ts" ]
+CMD [ "run", "--allow-net", "./main.ts" ]

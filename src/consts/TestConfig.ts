@@ -54,6 +54,14 @@ const config: TestConfig = {
 					keepAlive: false,
 					cpuAllocationPercent: 0.25,
 				},
+				// {
+				// 	parallelProcesses: 1,
+				// 	concurrency: 256,
+				// 	totalRequestsToSend: 10000,
+				// 	route: '/healthcheck',
+				// 	keepAlive: false,
+				// 	cpuAllocationPercent: 0.25,
+				// },
 			],
 		},
 		// @todo Implement docker controls for starting/stopping the images with difference resource allocations for cpu controls.

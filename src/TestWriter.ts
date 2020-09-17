@@ -9,7 +9,7 @@ export default function writeSample(
 	subIndex: number,
 	sample: Sample,
 ): void {
-	ElasticSearch.connection.index({
+	ElasticSearch.connection?.index({
 		index: 'test_sample',
 		body: {
 			name: configName,
@@ -18,5 +18,5 @@ export default function writeSample(
 			config: subtest,
 			sample,
 		},
-	})
+	});
 }

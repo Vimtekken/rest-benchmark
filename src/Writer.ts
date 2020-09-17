@@ -100,6 +100,32 @@ export function writeReportsOld(reports: ApplicationReport[]): void {
 }
 
 // Loads relavent information form postgres and drops the data out into json, csv formats
-export default async function writeReports(): Promise<void> {
-	
+export default async function writeReports(reports: ApplicationReport[]): Promise<void> {
+	reports.forEach((report) => {
+		let maxRps = 0;
+		report.tests.forEach((test) => {
+			for (let i = 0; i < test.subtests.length; i += 1) {
+				const subtest = test.subtests[i];
+				let subtestMaxRps = 0;
+				const allSubRps: number[] = [];
+				subtest.trials.forEach((trial) => {
+					allSubRps.push(trial.bench?.requestsPerSecond || 0);
+					if ((trial.bench?.requestsPerSecond || 0) > maxRps) {
+						maxRps = trial.bench?.requestsPerSecond || 0;
+					}
+					if ((trial.bench?.requestsPerSecond || 0) > subtestMaxRps) {
+						subtestMaxRps = trial.bench?.requestsPerSecond || 0;
+					}
+				});
+				console.log(
+					`Max rps on ${report.application} for subtest test-${test.name} `,
+					subtestMaxRps,
+					'average',
+					Utility.math.average(allSubRps),
+					'deviation',
+					Utility.math.standardDeviation(allSubRps),
+				);
+			}
+		});
+	});
 }

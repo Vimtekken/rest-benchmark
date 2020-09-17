@@ -6,13 +6,13 @@ import {
 	RequestData,
 } from './interfaces/Apache';
 import { SubtestResult, TestResult } from './interfaces/Tests';
-import ApacheBench from './ApacheBench';
 import Logger from './Logger';
 import { Sample } from './interfaces/Sample';
 import SystemMetrics from './SystemMetrics';
 import TestConfig from './consts/TestConfig';
 import TestWriter from './TestWriter';
 import Utility from './Utility';
+import Weighttp from './benchmarkers/Weighttp';
 
 // @todo fix the averages for this. They are going to be approx but not accurate
 // Because it is averaged step by step and not over the whole range at once.
@@ -86,24 +86,20 @@ export default async function tester(name: string, metrics: SystemMetrics, host:
 			const subtest = test.subtests[subtestIndex];
 			for (let trial = 0; trial < TestConfig.numberOfTrails; trial += 1) {
 				log.info('Performing subtest ', subtestIndex, ', trial ', trial);
-				await Utility.sleep(1000);
+				await Utility.sleep(2000);
 				const loadTestStartTime = new Date();
-				const dataPromises: Promise<ApacheData | null>[] = [];
-				for (let process = 0; process < subtest.parallelProcesses; process += 1) {
-					dataPromises.push(ApacheBench(
-						host,
-						port,
-						subtest.route,
-						subtest.concurrency,
-						subtest.totalRequestsToSend / subtest.parallelProcesses,
-						subtest.keepAlive,
-					));
-				}
-				const apacheData: (ApacheData | null)[] = await Promise.all(dataPromises);
+				const benchData = Weighttp(
+					host,
+					port,
+					subtest.route,
+					subtest.concurrency,
+					subtest.totalRequestsToSend / subtest.parallelProcesses,
+					subtest.keepAlive,
+				);
 				const loadTestEndTime = new Date();
 				const systemStats = await metrics.getMetricForDuration(loadTestStartTime, loadTestEndTime);
 				trials.push({
-					apache: mergeApacheData(apacheData),
+					bench: benchData,
 					system: systemStats,
 				});
 				TestWriter(name, test.name, subtest, subtestIndex, trials[trials.length - 1]);

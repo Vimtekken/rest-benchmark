@@ -15,12 +15,13 @@ const config: ApplicationConfig[] = [
 		https: false,
 	},
 	// For Some reason apache bench does not complete requests to pistache. Curl works.
-	// {
-	// 	name: 'cpp-pistache.io',
-	// 	source: 'servers/cpp/pistache.io',
-	// 	httpPort: 8080,
-	// 	https: false,
-	// },
+	// Looks like apache-bench wants to use http1.0 and that isn't supported in this lib.
+	{
+		name: 'cpp-pistache.io',
+		source: 'servers/cpp/pistache.io',
+		httpPort: 8080,
+		https: false,
+	},
 	{
 		name: 'cpp-seastar',
 		source: 'servers/cpp/seastar',
@@ -39,6 +40,8 @@ const config: ApplicationConfig[] = [
 		httpPort: 8080,
 		https: false,
 	},
+	// For Some reason apache bench does not complete requests to deno. Curl works.
+	// Looks like apache-bench wants to use http1.0 and that isn't supported in this lib.
 	{
 		name: 'typescript-deno',
 		source: 'servers/typescript/deno',

@@ -4,9 +4,9 @@ import {
 	ConnectTimes,
 	DataTransfers,
 	RequestData,
-} from './interfaces/Apache';
+} from '../interfaces/Apache';
 import { exec } from 'child_process';
-import Logger from './Logger';
+import Logger from '../Logger';
 
 const log = new Logger('rb', 'ApacheBench');
 

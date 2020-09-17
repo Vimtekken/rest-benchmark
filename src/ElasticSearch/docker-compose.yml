@@ -1,0 +1,11 @@
+version: '3.7'
+
+services:
+  elastic_search:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9300:9300"
+      - "9200:9200"
