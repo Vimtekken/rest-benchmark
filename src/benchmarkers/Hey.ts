@@ -37,9 +37,9 @@ export default function testLoad(
 	keepAlive: boolean = false,
 ): HeyData {
 	const threads = concurrency < defaultThreads ? concurrency : defaultThreads;
-	const keepAliveParam = keepAlive ? ' ' : ' -disable-keepalive ';
+	// const keepAliveParam = keepAlive ? ' ' : ' -disable-keepalive ';
 	const image = 'ricoli/hey';
-	const result = spawnSync(`docker run ${image} -n ${numberOfCalls} -t 1 -c ${concurrency} -cpus ${threads}${keepAliveParam}http://${host}:${port}${path}`, { stdio: 'pipe', shell: true });
+	const result = spawnSync(`docker run ${image} -n ${numberOfCalls} -t 1 -c ${concurrency} -cpus ${threads} http://${host}:${port}${path}`, { stdio: 'pipe', shell: true });
 	const stringResult = (result.output[1] as unknown as Buffer).toString('utf-8');
 	console.log('Test result', stringResult);
 	if (result.error) {

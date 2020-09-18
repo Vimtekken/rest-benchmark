@@ -11,7 +11,7 @@ const config: TestConfig = {
 					concurrency: 1,
 					totalRequestsToSend: 10000,
 					route: '/healthcheck',
-					keepAlive: false,
+					keepAlive: true,
 					cpuAllocationPercent: 0.25,
 				},
 				{
@@ -19,7 +19,7 @@ const config: TestConfig = {
 					concurrency: 8,
 					totalRequestsToSend: 10000,
 					route: '/healthcheck',
-					keepAlive: false,
+					keepAlive: true,
 					cpuAllocationPercent: 0.25,
 				},
 				{
@@ -27,7 +27,7 @@ const config: TestConfig = {
 					concurrency: 16,
 					totalRequestsToSend: 10000,
 					route: '/healthcheck',
-					keepAlive: false,
+					keepAlive: true,
 					cpuAllocationPercent: 0.25,
 				},
 				{
@@ -35,7 +35,7 @@ const config: TestConfig = {
 					concurrency: 32,
 					totalRequestsToSend: 10000,
 					route: '/healthcheck',
-					keepAlive: false,
+					keepAlive: true,
 					cpuAllocationPercent: 0.25,
 				},
 				{
@@ -43,7 +43,7 @@ const config: TestConfig = {
 					concurrency: 64,
 					totalRequestsToSend: 10000,
 					route: '/healthcheck',
-					keepAlive: false,
+					keepAlive: true,
 					cpuAllocationPercent: 0.25,
 				},
 				{
@@ -51,7 +51,7 @@ const config: TestConfig = {
 					concurrency: 128,
 					totalRequestsToSend: 10000,
 					route: '/healthcheck',
-					keepAlive: false,
+					keepAlive: true,
 					cpuAllocationPercent: 0.25,
 				},
 				// {
@@ -102,43 +102,45 @@ const config: TestConfig = {
 		// 		},
 		// 	],
 		// },
-		{
-			name: 'keep alive',
-			subtests: [
-				{
-					parallelProcesses: 1,
-					concurrency: 32,
-					totalRequestsToSend: 10000,
-					route: '/healthcheck',
-					keepAlive: false,
-					cpuAllocationPercent: 0.25,
-				},
-				{
-					parallelProcesses: 1,
-					concurrency: 32,
-					totalRequestsToSend: 10000,
-					route: '/healthcheck',
-					keepAlive: true,
-					cpuAllocationPercent: 0.25,
-				},
-				{
-					parallelProcesses: 1,
-					concurrency: 64,
-					totalRequestsToSend: 10000,
-					route: '/healthcheck',
-					keepAlive: false,
-					cpuAllocationPercent: 0.25,
-				},
-				{
-					parallelProcesses: 1,
-					concurrency: 64,
-					totalRequestsToSend: 10000,
-					route: '/healthcheck',
-					keepAlive: true,
-					cpuAllocationPercent: 0.25,
-				},
-			],
-		},
+		// Disabling keep alive for now. Not all servers respect closing all the time.
+		// So for test at the moment they are all keep alive.
+		// {
+		// 	name: 'keep alive',
+		// 	subtests: [
+		// 		{
+		// 			parallelProcesses: 1,
+		// 			concurrency: 32,
+		// 			totalRequestsToSend: 10000,
+		// 			route: '/healthcheck',
+		// 			keepAlive: false,
+		// 			cpuAllocationPercent: 0.25,
+		// 		},
+		// 		{
+		// 			parallelProcesses: 1,
+		// 			concurrency: 32,
+		// 			totalRequestsToSend: 10000,
+		// 			route: '/healthcheck',
+		// 			keepAlive: true,
+		// 			cpuAllocationPercent: 0.25,
+		// 		},
+		// 		{
+		// 			parallelProcesses: 1,
+		// 			concurrency: 64,
+		// 			totalRequestsToSend: 10000,
+		// 			route: '/healthcheck',
+		// 			keepAlive: false,
+		// 			cpuAllocationPercent: 0.25,
+		// 		},
+		// 		{
+		// 			parallelProcesses: 1,
+		// 			concurrency: 64,
+		// 			totalRequestsToSend: 10000,
+		// 			route: '/healthcheck',
+		// 			keepAlive: true,
+		// 			cpuAllocationPercent: 0.25,
+		// 		},
+		// 	],
+		// },
 		{
 			name: 'total requests',
 			subtests: [
@@ -147,7 +149,7 @@ const config: TestConfig = {
 					concurrency: 64,
 					totalRequestsToSend: 1000,
 					route: '/healthcheck',
-					keepAlive: false,
+					keepAlive: true,
 					cpuAllocationPercent: 0.25,
 				},
 				{
@@ -155,7 +157,7 @@ const config: TestConfig = {
 					concurrency: 64,
 					totalRequestsToSend: 5000,
 					route: '/healthcheck',
-					keepAlive: false,
+					keepAlive: true,
 					cpuAllocationPercent: 0.25,
 				},
 				{
@@ -163,7 +165,7 @@ const config: TestConfig = {
 					concurrency: 64,
 					totalRequestsToSend: 10000,
 					route: '/healthcheck',
-					keepAlive: false,
+					keepAlive: true,
 					cpuAllocationPercent: 0.25,
 				},
 				{
@@ -171,7 +173,7 @@ const config: TestConfig = {
 					concurrency: 64,
 					totalRequestsToSend: 50000,
 					route: '/healthcheck',
-					keepAlive: false,
+					keepAlive: true,
 					cpuAllocationPercent: 0.25,
 				},
 			],

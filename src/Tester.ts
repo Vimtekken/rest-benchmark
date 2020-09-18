@@ -104,6 +104,7 @@ async function benchWithApache(host: string, port: number, subtest: TestSampleCo
 	);
 	const loadTestEndTime = new Date();
 	const systemStats = await metrics.getMetricForDuration(loadTestStartTime, loadTestEndTime);
+	console.log('RPS:', abData?.requests.rps);
 	return {
 		apache: abData ?? undefined,
 		system: systemStats,
