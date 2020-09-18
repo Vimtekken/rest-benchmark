@@ -5,14 +5,15 @@ import {
 	DataTransfers,
 	RequestData,
 } from './interfaces/Apache';
-import { SubtestResult, TestResult } from './interfaces/Tests';
+import { SubtestResult, TestResult, TestSampleConfig } from './interfaces/Tests';
+import ApacheBench from './benchmarkers/ApacheBench';
+import Hey from './benchmarkers/Hey';
 import Logger from './Logger';
 import { Sample } from './interfaces/Sample';
 import SystemMetrics from './SystemMetrics';
 import TestConfig from './consts/TestConfig';
 import TestWriter from './TestWriter';
 import Utility from './Utility';
-import Weighttp from './benchmarkers/Weighttp';
 
 // @todo fix the averages for this. They are going to be approx but not accurate
 // Because it is averaged step by step and not over the whole range at once.
@@ -73,6 +74,42 @@ function mergeApacheData(data: (ApacheData | null)[]): ApacheData | null {
 	return current;
 }
 
+async function benchWithHey(host: string, port: number, subtest: TestSampleConfig, metrics: SystemMetrics): Promise<Sample> {
+	const loadTestStartTime = new Date();
+	const heyData = Hey(
+		host,
+		port,
+		subtest.route,
+		subtest.concurrency,
+		subtest.totalRequestsToSend / subtest.parallelProcesses,
+		subtest.keepAlive,
+	);
+	const loadTestEndTime = new Date();
+	const systemStats = await metrics.getMetricForDuration(loadTestStartTime, loadTestEndTime);
+	return {
+		hey: heyData,
+		system: systemStats,
+	};
+}
+
+async function benchWithApache(host: string, port: number, subtest: TestSampleConfig, metrics: SystemMetrics): Promise<Sample> {
+	const loadTestStartTime = new Date();
+	const abData = await ApacheBench(
+		host,
+		port,
+		subtest.route,
+		subtest.concurrency,
+		subtest.totalRequestsToSend / subtest.parallelProcesses,
+		subtest.keepAlive,
+	);
+	const loadTestEndTime = new Date();
+	const systemStats = await metrics.getMetricForDuration(loadTestStartTime, loadTestEndTime);
+	return {
+		apache: abData ?? undefined,
+		system: systemStats,
+	};
+}
+
 export default async function tester(name: string, metrics: SystemMetrics, host: string, port: number): Promise<TestResult[]> {
 	const results: TestResult[] = [];
 	const log = new Logger('rb', name, 'tester');
@@ -87,21 +124,7 @@ export default async function tester(name: string, metrics: SystemMetrics, host:
 			for (let trial = 0; trial < TestConfig.numberOfTrails; trial += 1) {
 				log.info('Performing subtest ', subtestIndex, ', trial ', trial);
 				await Utility.sleep(2000);
-				const loadTestStartTime = new Date();
-				const benchData = Weighttp(
-					host,
-					port,
-					subtest.route,
-					subtest.concurrency,
-					subtest.totalRequestsToSend / subtest.parallelProcesses,
-					subtest.keepAlive,
-				);
-				const loadTestEndTime = new Date();
-				const systemStats = await metrics.getMetricForDuration(loadTestStartTime, loadTestEndTime);
-				trials.push({
-					bench: benchData,
-					system: systemStats,
-				});
+				trials.push(await benchWithHey(host, port, subtest, metrics));
 				TestWriter(name, test.name, subtest, subtestIndex, trials[trials.length - 1]);
 			}
 			subtests.push({

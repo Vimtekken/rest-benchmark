@@ -1,6 +1,7 @@
 import OS from 'os';
 import { spawnSync } from 'child_process';
 
+// XXX: Don't use this benchmarker. Bad result.
 export interface WeighttpData {
 	requestsPerSecond: number;
 }

@@ -8,6 +8,9 @@ import {
 import { exec } from 'child_process';
 import Logger from '../Logger';
 
+// XXX: Apache bench only works on frameworks that support HTTP/1.0. Piastach.io and Deno both do not and cannot
+// therfore be tested under this benchmarker.
+
 const log = new Logger('rb', 'ApacheBench');
 
 const connectionRegexes = {

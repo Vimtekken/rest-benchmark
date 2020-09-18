@@ -109,12 +109,12 @@ export default async function writeReports(reports: ApplicationReport[]): Promis
 				let subtestMaxRps = 0;
 				const allSubRps: number[] = [];
 				subtest.trials.forEach((trial) => {
-					allSubRps.push(trial.bench?.requestsPerSecond || 0);
-					if ((trial.bench?.requestsPerSecond || 0) > maxRps) {
-						maxRps = trial.bench?.requestsPerSecond || 0;
+					allSubRps.push(trial.hey?.requestsPerSecond || 0);
+					if ((trial.hey?.requestsPerSecond || 0) > maxRps) {
+						maxRps = trial.hey?.requestsPerSecond || 0;
 					}
-					if ((trial.bench?.requestsPerSecond || 0) > subtestMaxRps) {
-						subtestMaxRps = trial.bench?.requestsPerSecond || 0;
+					if ((trial.hey?.requestsPerSecond || 0) > subtestMaxRps) {
+						subtestMaxRps = trial.hey?.requestsPerSecond || 0;
 					}
 				});
 				console.log(
