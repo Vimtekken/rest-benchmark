@@ -19,7 +19,7 @@ export default class Kibana {
 					headers: { 'Content-Type': 'application/json' },
 				});
 				if (!response.ok) {
-					log.error(await response.text());
+					log.debug(await response.text());
 				}
 				succeeded = response.ok;
 			} catch (error) {

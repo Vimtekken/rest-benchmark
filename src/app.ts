@@ -101,11 +101,7 @@ async function switchToAsync() {
 		applicationReports.push(await testConfig(applicationConfigurations[i], metrics));
 	}
 
-	// Wrtie report data to output
-	Writer(applicationReports);
 	log.info('Load Test Complete');
-
-	// Close resources
 	log.info('Stopping monitoring');
 	Monitoring.stop();
 
