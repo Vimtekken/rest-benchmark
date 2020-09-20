@@ -2,7 +2,9 @@ import ApplicationConfig from './interfaces/ApplicationConfig';
 import { ApplicationReport } from './interfaces/ServerReport';
 import DefaultAppConfig from './consts/ApplicationConfig';
 import Docker from './Docker';
+import ElasticSearch from './ElasticSearch';
 import Environment from './consts/Environment';
+import Kibana from './Kibana';
 import Logger from './Logger';
 import Monitoring from './monitoring';
 import { SystemData } from './interfaces/System';
@@ -76,9 +78,13 @@ async function switchToAsync() {
 		Monitoring.stop();
 	});
 
+	log.info('Launching Results Database');
+	ElasticSearch.start();
+	Kibana.stop();
+	await ElasticSearch.waitForHealth();
+
 	// Launch the monitoring services on the remote host.
 	log.info('Launching monitoring');
-	// Monitoring.stop();
 	Monitoring.start();
 
 	// Create system metrics instance
@@ -97,12 +103,15 @@ async function switchToAsync() {
 
 	// Wrtie report data to output
 	Writer(applicationReports);
+	log.info('Load Test Complete');
 
 	// Close resources
 	log.info('Stopping monitoring');
 	Monitoring.stop();
 
-	log.info('Load Test Complete');
+	log.info(`Launching Kibana Visualizer at http://${remoteHost}:5601`);
+	log.info('This may take a while...');
+	Kibana.start(remoteHost);
 }
 
 switchToAsync();

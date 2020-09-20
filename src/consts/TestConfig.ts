@@ -1,5 +1,9 @@
 import { TestConfig } from '../interfaces/Tests';
 
+// @todo Add a class of tests for larger responses. Like 1k, 32k, 128k, 512k, 1m, 8m response sizes.
+// @todo Add a class of tests for heavier computation routes. Maybe fibbonacci number calculation to simulate computation occurring in route.
+// @todo Bring back keep-alive false tests.
+// @todo Implement CPU variance tests.
 const config: TestConfig = {
 	numberOfTrails: 3,
 	tests: [
@@ -54,14 +58,6 @@ const config: TestConfig = {
 					keepAlive: true,
 					cpuAllocationPercent: 0.25,
 				},
-				// {
-				// 	parallelProcesses: 1,
-				// 	concurrency: 256,
-				// 	totalRequestsToSend: 10000,
-				// 	route: '/healthcheck',
-				// 	keepAlive: false,
-				// 	cpuAllocationPercent: 0.25,
-				// },
 			],
 		},
 		// @todo Implement docker controls for starting/stopping the images with difference resource allocations for cpu controls.
@@ -104,6 +100,7 @@ const config: TestConfig = {
 		// },
 		// Disabling keep alive for now. Not all servers respect closing all the time.
 		// So for test at the moment they are all keep alive.
+		// @todo Re-enable these tests
 		// {
 		// 	name: 'keep alive',
 		// 	subtests: [
