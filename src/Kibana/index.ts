@@ -8,24 +8,28 @@ const log = new Logger('rb', 'kibana');
 
 export default class Kibana {
 	static async pushDashboards(remoteHost: string): Promise<void> {
-		let succeeded = false;
-		while (!succeeded) {
-			try {
-				await Utility.sleep(1000); // It takes a while. 1 second intervals is fine.
-				const overview = (await FS.readFile(`${__dirname}/dashboards/overview.json`)).toString('utf-8');
-				const response = await NodeFetch(`http://${remoteHost}:5601/api/kibana/dashboards/import`, {
-					method: 'post',
-					body: overview,
-					headers: { 'Content-Type': 'application/json' },
-				});
-				if (!response.ok) {
-					log.debug(await response.text());
+		const dashboards = ['overview.json', 'docker.json'];
+		const promises = dashboards.map(async (dashboard) => {
+			let succeeded = false;
+			while (!succeeded) {
+				try {
+					await Utility.sleep(1000); // It takes a while. 1 second intervals is fine.
+					const overview = (await FS.readFile(`${__dirname}/dashboards/${dashboard}`)).toString('utf-8');
+					const response = await NodeFetch(`http://${remoteHost}:5601/api/kibana/dashboards/import`, {
+						method: 'post',
+						body: overview,
+						headers: { 'Content-Type': 'application/json' },
+					});
+					if (!response.ok) {
+						log.debug(await response.text());
+					}
+					succeeded = response.ok;
+				} catch (error) {
+					log.debug(error);
 				}
-				succeeded = response.ok;
-			} catch (error) {
-				log.debug(error);
 			}
-		}
+		});
+		await Promise.all(promises);
 	}
 
 	static start(remoteHost: string): void {
