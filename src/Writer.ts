@@ -65,7 +65,7 @@ function processData(reports: ApplicationReport[]): ProcessedReports[] {
 	return processedReports;
 }
 
-export function writeReportsOld(reports: ApplicationReport[]): void {
+export default function writeReportsOld(reports: ApplicationReport[]): void {
 	const opts = {
 		flatten: true,
 	};
@@ -100,7 +100,7 @@ export function writeReportsOld(reports: ApplicationReport[]): void {
 }
 
 // Loads relavent information form postgres and drops the data out into json, csv formats
-export default async function writeReports(reports: ApplicationReport[]): Promise<void> {
+export async function writeReports(reports: ApplicationReport[]): Promise<void> {
 	reports.forEach((report) => {
 		let maxRps = 0;
 		report.tests.forEach((test) => {

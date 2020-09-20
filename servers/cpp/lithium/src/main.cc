@@ -8,7 +8,7 @@ int main() {
 
   // Define a HTTP GET endpoint.
   api.get("/healthcheck") = [&](http_request& request, http_response& response) {
-    response.write("hello world.");
+    response.write("");
   };
 
   // Start a http server.

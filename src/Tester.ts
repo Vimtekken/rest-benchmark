@@ -104,7 +104,7 @@ async function benchWithApache(host: string, port: number, subtest: TestSampleCo
 	);
 	const loadTestEndTime = new Date();
 	const systemStats = await metrics.getMetricForDuration(loadTestStartTime, loadTestEndTime);
-	console.log('RPS:', abData?.requests.rps);
+	console.log('ab:', abData);
 	return {
 		apache: abData ?? undefined,
 		system: systemStats,
@@ -125,7 +125,7 @@ export default async function tester(name: string, metrics: SystemMetrics, host:
 			for (let trial = 0; trial < TestConfig.numberOfTrails; trial += 1) {
 				log.info('Performing subtest ', subtestIndex, ', trial ', trial);
 				await Utility.sleep(2000);
-				trials.push(await benchWithHey(host, port, subtest, metrics));
+				trials.push(await benchWithApache(host, port, subtest, metrics));
 				TestWriter(name, test.name, subtest, subtestIndex, trials[trials.length - 1]);
 			}
 			subtests.push({
