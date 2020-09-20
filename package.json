@@ -9,11 +9,13 @@
     "loglevel": "1.7.0",
     "loglevel-colored-level-prefix": "1.0.0",
     "loglevel-message-prefix": "3.0.0",
+    "node-fetch": "2.6.1",
     "request": "2.88.2",
     "request-promise-native": "1.0.9"
   },
   "description": "Benchmarking the HTTP handling of multiple REST frameworks",
   "devDependencies": {
+    "@types/node-fetch": "1.6.9",
     "@types/request-promise-native": "1.0.17",
     "@typescript-eslint/eslint-plugin": "4.1.0",
     "@typescript-eslint/parser": "4.1.0",

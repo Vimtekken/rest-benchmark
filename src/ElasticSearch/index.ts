@@ -16,7 +16,7 @@ export default class ElasticSearch {
 		}
 		if (!this.conn) {
 			const connectionUrl = `http://${Environment.REMOTE_HOST}:9200`;
-			log.info('Creating connection to', connectionUrl);
+			log.debug('Creating connection to', connectionUrl);
 			this.conn = new Client({ node: connectionUrl });
 		}
 		return this.conn;
@@ -33,15 +33,20 @@ export default class ElasticSearch {
 	}
 
 	static async waitForHealth(): Promise<void> {
+		log.debug('Starting wait for health');
 		let healthy = false;
 		while (!healthy) {
 			await Utility.sleep(20);
 			try {
-				this.connection?.cluster.health({ wait_for_status: 'green' });
-				healthy = true;
+				if (this.connection) {
+					const response = await this.connection.cluster.health({ wait_for_status: 'green' });
+					log.debug(response);
+					healthy = true;
+				}
 			} catch (error) {
 				// Do nothing really
 			}
 		}
+		log.debug('Finished wait for health');
 	}
 }

@@ -27,10 +27,10 @@ if (!remoteHost) {
 function getApplicationConfigs(): ApplicationConfig[] {
 	if (process.argv?.length > 2) {
 		const apps: string[] = process.argv.slice(2);
-		log.debug('Testing applications ', apps);
-		return DefaultAppConfig.filter((config) => apps.indexOf(config.name) === 0);
+		log.info('Testing applications ', apps);
+		return DefaultAppConfig.filter((config) => apps.indexOf(config.name) >= 0);
 	}
-	log.debug('Testing applications: ', DefaultAppConfig.map((config) => config.name));
+	log.info('Testing applications: ', DefaultAppConfig.map((config) => config.name));
 	return DefaultAppConfig;
 }
 
@@ -109,9 +109,10 @@ async function switchToAsync() {
 	log.info('Stopping monitoring');
 	Monitoring.stop();
 
-	log.info(`Launching Kibana Visualizer at http://${remoteHost}:5601`);
-	log.info('This may take a while...');
+	log.info('Launching Kibana Visualizer. This may take a while...');
 	Kibana.start(remoteHost);
+	await Kibana.pushDashboards(remoteHost);
+	log.info(`Kibana finished launching at http://${remoteHost}:5601`);
 }
 
 switchToAsync();
