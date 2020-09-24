@@ -44,6 +44,12 @@ const config: ApplicationConfig[] = [
 		https: false,
 	},
 	{
+		name: 'dart-raw-isolate',
+		source: 'servers/dart/raw-native-isolate',
+		httpPort: 8080,
+		https: false,
+	},
+	{
 		name: 'dart-shelf',
 		source: 'servers/dart/shelf',
 		httpPort: 8080,
